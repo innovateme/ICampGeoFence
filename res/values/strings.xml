@@ -12,7 +12,7 @@
     <string name="add_fence_desc">Create a circular geofence by entering the origin coordinates and radius:</string>
     <string name="default_radius">1000</string>
     <string name="add_btn_label">Add</string>
-    <string name="fence_list_title">Display list of existing geofences here.</string>
+    <string name="fence_list_title">TODO: Display list of existing geofences here.</string>
     <string name="current_loc_btn_desc">Use current location as origin</string>
     <string name="title_activity_add_fence">Add New Geofence</string>
     <string name="about_menu_label">About</string>
