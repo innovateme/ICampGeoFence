@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ICampGeoFence</string>
+    <string name="action_settings">Settings</string>
+    <string name="add_fence">Add New GeoFence</string>
+    <string name="lat_prompt">Latitude:</string>
+    <string name="long_prompt">Longitude:</string>
+    <string name="radius_prompt">Radius (m):</string>
+    <string name="lat_hint">eg: 40.6700000</string>
+    <string name="long_hint">eg: 73.9400000</string>
+    <string name="add_fence_desc">Create a circular geofence by entering the origin coordinates and radius:</string>
+    <string name="default_radius">1000</string>
+    <string name="add_btn_label">Add</string>
+    <string name="fence_list_title">Display list of existing geofences here.</string>
+    <string name="current_loc_btn_desc">Use current location as origin</string>
+    <string name="title_activity_add_fence">Add New Geofence</string>
+
+</resources>

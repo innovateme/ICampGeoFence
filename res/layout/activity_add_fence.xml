@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:useDefaultMargins="true"
+       android:alignmentMode="alignBounds"
+       android:columnOrderPreserved="false"
+       android:columnCount="3">
+        
+	    <TextView 
+		    android:layout_columnSpan="3"
+		    android:layout_gravity="left"
+		    style="@android:style/TextAppearance.DeviceDefault.Medium"
+		    android:text="@string/add_fence_desc" />
+	    
+		<TextView
+		    android:layout_marginTop="10dp"
+		    android:layout_column="0"
+	        android:layout_gravity="right|center_vertical"
+		    style="@android:style/TextAppearance.DeviceDefault.Medium"
+	        android:text="@string/lat_prompt" />
+		
+	    <EditText android:id="@+id/new_lat"
+		    style="@android:style/TextAppearance.DeviceDefault.Medium"
+	        android:hint="@string/lat_hint"
+	        android:inputType="numberDecimal" />
+		
+	    <ImageButton
+	        android:layout_rowSpan="2"
+			android:layout_gravity="left|center_vertical"
+			android:src="@drawable/gps13"
+			android:onClick="useCurrentLocation"
+			android:contentDescription="@string/current_loc_btn_desc" />
+		
+	    <TextView
+		    android:layout_marginTop="10dp"
+		    android:layout_column="0"
+	        android:layout_gravity="right|center_vertical"
+		    style="@android:style/TextAppearance.DeviceDefault.Medium"
+	        android:text="@string/long_prompt" />
+				
+		<EditText android:id="@+id/new_long"
+		    style="@android:style/TextAppearance.DeviceDefault.Medium"
+	        android:hint="@string/long_hint"
+	        android:inputType="numberDecimal" />
+					
+		<TextView
+		    android:layout_marginTop="10dp"
+		    android:layout_column="0"
+			android:layout_gravity="right|center_vertical"
+		    style="@android:style/TextAppearance.DeviceDefault.Medium"
+	        android:text="@string/radius_prompt" />
+		
+		<EditText android:id="@+id/new_radius"
+		    style="@android:style/TextAppearance.DeviceDefault.Medium"
+	        android:text="@string/default_radius"
+	        android:inputType="number" />
+
+		<Button 
+		    android:layout_column="0"
+		    android:layout_marginTop="40dp"
+			android:layout_gravity="left"
+		    style="@android:style/TextAppearance.DeviceDefault.Small"
+	        android:text="@string/add_btn_label"
+			android:onClick="addFence" />
+</GridLayout>
