@@ -15,5 +15,6 @@
     <string name="fence_list_title">Display list of existing geofences here.</string>
     <string name="current_loc_btn_desc">Use current location as origin</string>
     <string name="title_activity_add_fence">Add New Geofence</string>
-
+    <string name="about_menu_label">About</string>
+    <string name="title_activity_about">About</string>
 </resources>

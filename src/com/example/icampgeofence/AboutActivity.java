@@ -1,7 +1,7 @@
 package com.example.icampgeofence;
 
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
 
 public class AboutActivity extends Activity {
 

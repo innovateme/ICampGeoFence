@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 public class MainActivity extends Activity {
@@ -26,4 +27,22 @@ public class MainActivity extends Activity {
     	Intent intent = new Intent(this, AddFenceActivity.class);
     	startActivity(intent);
     }
+    
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.item_about:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+	    	Intent intent = new Intent(this, AboutActivity.class);
+	    	startActivity(intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }
