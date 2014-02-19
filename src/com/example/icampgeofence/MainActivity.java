@@ -2,6 +2,7 @@ package com.example.icampgeofence;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,8 +48,28 @@ public class MainActivity extends Activity {
         });
 	
 		locationMgr = new LocationMgr(this);
+		
+    	startService(new Intent(this, ReceiveTransitionsIntentService.class));
 	}
-	
+
+    /*
+     * Create a PendingIntent that triggers an IntentService in your
+     * app when a geofence transition occurs.
+     */
+    private PendingIntent getTransitionPendingIntent() {
+        // Create an explicit Intent
+        Intent intent = new Intent(this,
+                ReceiveTransitionsIntentService.class);
+        /*
+         * Return the PendingIntent
+         */
+        return PendingIntent.getService(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
     /*
      * Called when the Activity becomes visible.
      */
