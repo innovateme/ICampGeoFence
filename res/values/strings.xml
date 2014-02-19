@@ -6,7 +6,7 @@
     <string name="add_fence">Add New GeoFence</string>
     <string name="lat_prompt">Latitude:</string>
     <string name="long_prompt">Longitude:</string>
-    <string name="radius_prompt">Radius (m):</string>
+    <string name="radius_prompt">Radius (meters):</string>
     <string name="lat_hint">eg: 40.6700000</string>
     <string name="long_hint">eg: 73.9400000</string>
     <string name="add_fence_desc">Create a circular geofence by entering the origin coordinates and radius:</string>
@@ -21,4 +21,7 @@
     <string name="about_version_label">Version 0.0.1</string>
     <string name="about_copyright_label">Copyright @ 2014</string>
     <string name="confirm_fence_delete_prompt">Permanently delete geofence?</string>
+    <string name="useCurrentLocation_label">(Use Current Location)</string>
+    <string name="fenceName_prompt">GeoFence Name</string>
+    <string name="fenceName_hint">e.g.:  Home</string>
 </resources>
