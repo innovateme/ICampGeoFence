@@ -79,7 +79,7 @@ public class AddFenceActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        locationMgr.start();
+        locationMgr.connect();
     }
 
     /*
@@ -87,7 +87,7 @@ public class AddFenceActivity extends Activity {
      */
     @Override
     protected void onStop() {
-    	locationMgr.stop();
+    	locationMgr.disconnect();
         super.onStop();
     }
     

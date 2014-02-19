@@ -1,6 +1,8 @@
 package com.example.icampgeofence;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
@@ -20,6 +22,7 @@ public class MainActivity extends Activity {
     private FenceMgr fenceMgr;
     private ArrayAdapter<Fence> fenceListAdapter;
 
+    private Intent serviceIntent = null;
     
     public FenceMgr getFenceList() {
 		return fenceMgr;
@@ -48,10 +51,28 @@ public class MainActivity extends Activity {
         });
 	
 		locationMgr = new LocationMgr(this);
-		
-    	startService(new Intent(this, ReceiveTransitionsIntentService.class));
+	}
+	
+	public void toggleService() {
+		if (isServiceRunning()) {
+			stopService(serviceIntent);
+		}
+		else {
+			serviceIntent = new Intent(this, ReceiveTransitionsIntentService.class);
+			startService(serviceIntent);
+		}
 	}
 
+	private boolean isServiceRunning() {
+		ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+		for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+			if ("com.example.icampgeofence.ReceiveTransitionsIntentService".equals(service.service.getClassName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
     /*
      * Create a PendingIntent that triggers an IntentService in your
      * app when a geofence transition occurs.
@@ -76,7 +97,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        locationMgr.start();
+        locationMgr.connect();
     }
 
     /*
@@ -84,7 +105,7 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onStop() {
-    	locationMgr.stop();
+    	locationMgr.disconnect();
         super.onStop();
     }
 
@@ -139,6 +160,9 @@ public class MainActivity extends Activity {
 	    	Intent intent = new Intent(this, AboutActivity.class);
 	    	startActivity(intent);
 			return true;
+		case R.id.action_toggle_service:
+			toggleService();
+			item.setChecked(!item.isChecked());
 		}
 		return super.onOptionsItemSelected(item);
 	}

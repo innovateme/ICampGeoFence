@@ -24,4 +24,5 @@
     <string name="useCurrentLocation_label">(Use Current Location)</string>
     <string name="fenceName_prompt">GeoFence Name</string>
     <string name="fenceName_hint">e.g.:  Home</string>
+    <string name="service_toggle_menu_label">Geofence Intent Service</string>
 </resources>

@@ -39,7 +39,7 @@ public class LocationMgr  implements
 		return locationClient;
 	}
 
-	protected void start() {
+	protected void connect() {
 		// Connect the client.
 		try {
 			locationClient.connect();
@@ -49,7 +49,7 @@ public class LocationMgr  implements
 		}
 	}
 
-	protected void stop() {
+	protected void disconnect() {
 		// Disconnecting the client invalidates it.
 		locationClient.disconnect();
 	}
