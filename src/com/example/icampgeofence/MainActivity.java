@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
-	
+
 		locationMgr = new LocationMgr(this);
 	}
 	
@@ -96,8 +96,9 @@ public class MainActivity extends Activity {
 	           .setCancelable(false)
 	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 	               public void onClick(DialogInterface dialog, int id) {
-		               	FenceMgr.getDefault().delete(fence);
-		            	fenceListAdapter.notifyDataSetChanged();
+	            	   locationMgr.removeGeofence(fence);
+	            	   // FIXME: this will not refresh the list until the main activity is redisplayed
+	            	   fenceListAdapter.notifyDataSetChanged();
 	               }
 	           })
 	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -117,7 +118,16 @@ public class MainActivity extends Activity {
         return true;
     }
     
-    public void addFenceActivity(View view) {
+    @Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_toggle_service);
+    	if (item != null) {
+    		item.setChecked(isServiceRunning());
+    	}
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	public void addFenceActivity(View view) {
     	Intent intent = new Intent(this, AddFenceActivity.class);
     	startActivity(intent);
     }
@@ -143,7 +153,6 @@ public class MainActivity extends Activity {
 			return true;
 		case R.id.action_toggle_service:
 			toggleService();
-			item.setChecked(!item.isChecked());
 		}
 		return super.onOptionsItemSelected(item);
 	}

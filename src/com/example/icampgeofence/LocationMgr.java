@@ -17,6 +17,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
+import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultListener;
 import com.google.android.gms.location.LocationStatusCodes;
 
 public class LocationMgr  implements
@@ -182,4 +183,35 @@ public class LocationMgr  implements
 			}
 		});
 	}
+    
+    public void removeGeofence(final Fence fence) {
+		List<String> gfList = new ArrayList<String>();
+		gfList.add(fence.getId());
+        locationClient.removeGeofences(gfList, new OnRemoveGeofencesResultListener() {
+			
+			@Override
+			public void onRemoveGeofencesByRequestIdsResult(int statusCode, String[] geofenceRequestIds) {
+				// if successful, persist the new Fence
+		        if (LocationStatusCodes.SUCCESS == statusCode) {
+		    		FenceMgr.getDefault().delete(fence);
+		    		Toast.makeText(parentActivity, "Removed geofence named " + fence.getName(), Toast.LENGTH_SHORT).show();
+		        }
+		        else {
+			        // If adding the geofences failed
+		            /*
+		             * Report errors here.
+		             * You can log the error using Log.e() or update
+		             * the UI.
+		             */
+		        }
+		        // Turn off the in progress flag
+		        inProgress = false;
+			}
+			
+			@Override
+			public void onRemoveGeofencesByPendingIntentResult(int arg0, PendingIntent arg1) {
+				// TODO Auto-generated method stub
+			}
+		});
+    }
 }
