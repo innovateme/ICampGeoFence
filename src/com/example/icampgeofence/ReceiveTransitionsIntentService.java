@@ -1,11 +1,11 @@
-import android.R;
+package com.example.icampgeofence;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-
 
 public class ReceiveTransitionsIntentService extends IntentService {
 
@@ -31,7 +31,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
 	public void onCreate() {
 		Toast.makeText(this, "ReceiveTransitionsIntentService Created", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate");
-		player = MediaPlayer.create(this, R.raw.sound_file_1);
+		player = MediaPlayer.create(this, R.raw.ziegengatter);
 		player.setLooping(false); // Set looping
 	}
 	@Override
