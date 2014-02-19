@@ -40,8 +40,10 @@ public class FenceMgr {
 	}
 
 	public void add(Fence fence) {
-		// add to list
-		fences.add(fence);
+		if (!fences.contains(fence)) {
+			// add to list
+			fences.add(fence);
+		}
 
 		// sync json
 		writeFences();

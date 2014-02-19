@@ -5,8 +5,9 @@ import com.google.android.gms.location.Geofence;
 /**
  * Data model for a circular geofence.
  */
-public class Fence {
+public class Fence implements Comparable<Fence> {
 	private final String id;
+	private final String name;
 	private final double lat;
 	private final double lon;
 	private final float radius;
@@ -22,14 +23,15 @@ public class Fence {
 	 * @param transition Type of Geofence transition.
 	 */
 	public Fence(
-			String requestId,
+			String name,
 			double latitude,
 			double longitude,
 			float radius,
 			long duration,
 			int transition) {
 
-		id = requestId;
+		id = name.toLowerCase();
+		this.name = name; 
 		lat = latitude;
 		lon = longitude;
 		this.radius = radius;
@@ -39,7 +41,7 @@ public class Fence {
 
 	@Override
 	public String toString() {
-		return String.format("%s,  %s,  %sm", lat, lon, radius);
+		return String.format("%s: %s,  %s,  %sm", name, lat, lon, radius);
 	}
 
 	public long getDuration() {
@@ -52,6 +54,10 @@ public class Fence {
 
 	public String getId() {
 		return id;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public double getLat() {
@@ -79,5 +85,10 @@ public class Fence {
 		.setCircularRegion(lat, lon, radius)
 		.setExpirationDuration(duration)
 		.build();
+	}
+
+	@Override
+	public int compareTo(Fence that) {
+		return this.id.equalsIgnoreCase(that.getId()) ? 1 : 0;
 	}
 }
