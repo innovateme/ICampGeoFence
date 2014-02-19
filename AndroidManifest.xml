@@ -18,8 +18,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.icampgeofence.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.DeviceDefault" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,8 +28,7 @@
         <activity
             android:name="com.example.icampgeofence.AddFenceActivity"
             android:label="@string/title_activity_add_fence"
-            android:parentActivityName="com.example.icampgeofence.MainActivity"
-            android:theme="@android:style/Theme.DeviceDefault" >
+            android:parentActivityName="com.example.icampgeofence.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.icampgeofence.MainActivity" />
@@ -42,8 +40,7 @@
         
         <activity
             android:name="com.example.icampgeofence.AboutActivity"
-            android:label="@string/title_activity_about"
-            android:theme="@android:style/Theme.DeviceDefault" />
+            android:label="@string/title_activity_about" />
 
     </application>
 

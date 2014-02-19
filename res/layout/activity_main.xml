@@ -12,10 +12,17 @@
 		style="@android:style/TextAppearance.DeviceDefault.Medium"
 		android:text="@string/fence_list_title" />
     
-    <Button
+	<ListView
         android:layout_marginTop="15dp"
+		style="@android:style/TextAppearance.DeviceDefault.Small"
+		android:id="@+id/fence_list"
+		android:layout_width="fill_parent" />
+
+	<Button
+	    android:layout_margin="10dp"
+	    android:layout_gravity="right|bottom"
 		style="@android:style/TextAppearance.DeviceDefault.Small"
 		android:text="@string/add_btn_label"
 		android:onClick="addFenceActivity" />
-        
+
 </GridLayout>

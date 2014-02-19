@@ -61,6 +61,13 @@
 		    android:layout_marginTop="40dp"
 			android:layout_gravity="left"
 		    style="@android:style/TextAppearance.DeviceDefault.Small"
+	        android:text="@android:string/cancel"
+			android:onClick="cancel" />
+
+		<Button 
+		    android:layout_marginTop="40dp"
+			android:layout_gravity="left"
+		    style="@android:style/TextAppearance.DeviceDefault.Small"
 	        android:text="@string/add_btn_label"
 			android:onClick="addFence" />
 </GridLayout>

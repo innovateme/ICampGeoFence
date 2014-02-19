@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 
 public class AddFenceActivity extends Activity implements
@@ -53,8 +54,28 @@ public class AddFenceActivity extends Activity implements
 
 	public void addFence(View view) {
 		// add geofence storage and call APIs
-	}
+	    String newLat = ((EditText) findViewById(R.id.new_lat)).getText().toString();
+	    String newLong = ((EditText) findViewById(R.id.new_long)).getText().toString();
+	    String newRadius = ((EditText) findViewById(R.id.new_radius)).getText().toString();
+	    if (newLat.isEmpty() || newLong.isEmpty() || newRadius.isEmpty()) {
+	        Toast.makeText(this, "Invalid geofence params", Toast.LENGTH_SHORT).show();
+	        return;
+	    }
 
+	    Fence f = new Fence(
+				"test",
+				Double.parseDouble(newLat),
+				Double.parseDouble(newLong),
+				Float.parseFloat(newRadius),
+				1000000, Geofence.GEOFENCE_TRANSITION_ENTER);
+
+		FenceMgr.getDefault().add(f);
+		NavUtils.navigateUpFromSameTask(this);
+	}
+	
+	public void cancel(View view) {
+		NavUtils.navigateUpFromSameTask(this);
+	}
 	
 	/*
      * Called by Location Services when the request to connect the
