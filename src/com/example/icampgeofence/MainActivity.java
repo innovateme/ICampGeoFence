@@ -2,7 +2,6 @@ package com.example.icampgeofence;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,11 +15,13 @@ import android.widget.ListView;
 
 public class MainActivity extends Activity {
 
-    private FenceMgr fenceList;
+    private LocationMgr locationMgr = null;
+    private FenceMgr fenceMgr;
     private ArrayAdapter<Fence> fenceListAdapter;
+
     
     public FenceMgr getFenceList() {
-		return fenceList;
+		return fenceMgr;
 	}
 
 	@Override
@@ -29,11 +30,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         FenceMgr.init(this);
-        fenceList = FenceMgr.getDefault();
+        fenceMgr = FenceMgr.getDefault();
 		
 		ListView fenceListView = (ListView)findViewById(R.id.fence_list);
 
-		fenceListAdapter = new ArrayAdapter<Fence>(this, android.R.layout.simple_list_item_1, fenceList.getFences());
+		fenceListAdapter = new ArrayAdapter<Fence>(this, android.R.layout.simple_list_item_1, fenceMgr.getFences());
 		fenceListView.setAdapter(fenceListAdapter);
 		
 		fenceListView.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -44,6 +45,26 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
+	
+		locationMgr = new LocationMgr(this);
+	}
+	
+    /*
+     * Called when the Activity becomes visible.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        locationMgr.start();
+    }
+
+    /*
+     * Called when the Activity is no longer visible.
+     */
+    @Override
+    protected void onStop() {
+    	locationMgr.stop();
+        super.onStop();
     }
 
 	private void deleteFenceWithConfirm(final Fence fence) {
@@ -79,7 +100,7 @@ public class MainActivity extends Activity {
     }
     
     public void deleteAllFences(View view) {
-    	fenceList.deleteAll();
+    	fenceMgr.deleteAll();
     	fenceListAdapter.notifyDataSetChanged();
     }
     
