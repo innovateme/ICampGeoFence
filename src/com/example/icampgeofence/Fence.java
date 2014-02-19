@@ -41,7 +41,7 @@ public class Fence implements Comparable<Fence> {
 
 	@Override
 	public String toString() {
-		return String.format("%s: %s,  %s,  %sm", name, lat, lon, radius);
+		return String.format("%s: %.4f,  %.4f,  %,.0f m", name, lat, lon, radius);
 	}
 
 	public long getDuration() {
