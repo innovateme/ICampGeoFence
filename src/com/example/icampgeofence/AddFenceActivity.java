@@ -51,7 +51,7 @@ public class AddFenceActivity extends Activity {
 				Float.parseFloat(newRadius),
 				1000000, Geofence.GEOFENCE_TRANSITION_ENTER);
 
-		FenceMgr.getDefault().add(f);
+	    locationMgr.addGeofence(f);
 		NavUtils.navigateUpFromSameTask(this);
 	}
 	

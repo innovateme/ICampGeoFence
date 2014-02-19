@@ -1,6 +1,11 @@
 package com.example.icampgeofence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,7 +14,10 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
+import com.google.android.gms.location.LocationStatusCodes;
 
 public class LocationMgr  implements
 	GooglePlayServicesClient.ConnectionCallbacks,
@@ -25,7 +33,14 @@ public class LocationMgr  implements
 	private final Activity parentActivity;
 	private LocationClient locationClient = null;
 
-	public LocationMgr(Activity parent) {
+    // Stores the PendingIntent used to request geofence monitoring
+    private PendingIntent geofenceRequestIntent;
+
+    // Flag that indicates if a request is underway.
+    private boolean inProgress = false;
+
+	
+    public LocationMgr(Activity parent) {
 		parentActivity = parent;
 
 		/*
@@ -115,5 +130,56 @@ public class LocationMgr  implements
 
 	void showErrorDialog(int code) {
 		GooglePlayServicesUtil.getErrorDialog(code, parentActivity, REQUEST_CODE_RECOVER_PLAY_SERVICES).show();
+	}
+
+    /*
+     * Create a PendingIntent that triggers an IntentService in your
+     * app when a geofence transition occurs.
+     */
+    private PendingIntent getTransitionPendingIntent() {
+        // Create an explicit Intent
+        Intent intent = new Intent(parentActivity, ReceiveTransitionsIntentService.class);
+        /*
+         * Return the PendingIntent
+         */
+        return PendingIntent.getService(
+                parentActivity,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+    
+    public void addGeofence(final Fence fence) {
+		// get pending intent for geofence transitions
+		geofenceRequestIntent = getTransitionPendingIntent();
+        // create new Geofence from Fence and add to play services
+		Geofence gf = fence.asGeofence();
+		List<Geofence> gfList = new ArrayList<Geofence>();
+		gfList.add(gf);
+		// Send a request to add the current geofences
+        locationClient.addGeofences(gfList, geofenceRequestIntent, new OnAddGeofencesResultListener() {
+			
+			@Override
+			public void onAddGeofencesResult(int statusCode, String[] geofenceRequestIds) {
+				// if successful, persist the new Fence
+		        if (LocationStatusCodes.SUCCESS == statusCode) {
+		    		FenceMgr.getDefault().add(fence);
+		    		Toast.makeText(parentActivity, "Added new geofence named " + fence.getName(), Toast.LENGTH_SHORT).show();
+		        }
+		        else {
+			        // If adding the geofences failed
+		            /*
+		             * Report errors here.
+		             * You can log the error using Log.e() or update
+		             * the UI.
+		             */
+		        }
+		        // Turn off the in progress flag
+		        inProgress = false;
+		        
+		        // disconnect the client
+		        //locationClient.disconnect();
+			}
+		});
 	}
 }
