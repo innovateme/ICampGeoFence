@@ -35,16 +35,17 @@ public class AddFenceActivity extends Activity {
 
 	public void addFence(View view) {
 		// add geofence storage and call APIs
+		String newFenceName = ((EditText) findViewById(R.id.fence_name)).getText().toString();
 	    String newLat = ((EditText) findViewById(R.id.new_lat)).getText().toString();
 	    String newLong = ((EditText) findViewById(R.id.new_long)).getText().toString();
 	    String newRadius = ((EditText) findViewById(R.id.new_radius)).getText().toString();
-	    if (newLat.isEmpty() || newLong.isEmpty() || newRadius.isEmpty()) {
+	    if (newFenceName.isEmpty() || newLat.isEmpty() || newLong.isEmpty() || newRadius.isEmpty()) {
 	        Toast.makeText(this, "Invalid geofence params", Toast.LENGTH_SHORT).show();
 	        return;
 	    }
 
 	    Fence f = new Fence(
-				"test",
+				newFenceName,
 				Double.parseDouble(newLat),
 				Double.parseDouble(newLong),
 				Float.parseFloat(newRadius),
