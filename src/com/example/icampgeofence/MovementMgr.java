@@ -29,14 +29,21 @@ public class MovementMgr implements
 	private final static int DETECTION_INTERVAL_MILLISECONDS = 30000;
 
 	private final Activity parentActivity;
-	private ActivityRecognitionClient activityClient = null;
+	private final ActivityRecognitionClient activityClient;
 
     // Stores the PendingIntent used to request activity monitoring
-    private PendingIntent activityRequestIntent = null;
+    private final PendingIntent activityRequestIntent;
 
     // Flag that indicates if a connection is underway.
-    private boolean inProgress = false;
+    private boolean updatesInProgress = false;
+    
+    public enum RequestType {
+    	START,
+    	STOP
+    }
 
+    private RequestType requestType = null;
+    		
 	public MovementMgr(Activity parent) {
 			parentActivity = parent;
 
@@ -45,14 +52,19 @@ public class MovementMgr implements
 			 * handle callbacks.
 			 */
 			activityClient = new ActivityRecognitionClient(parentActivity, this, this);
+			
+			activityRequestIntent = getTransitionPendingIntent();
 	}
 
 	public ActivityRecognitionClient getClient() {
 			return activityClient;
 	}
-
-	protected void startUpdates() {
-		// Connect the client.
+	
+	public boolean isUpdatesInProgress() {
+		return updatesInProgress;
+	}
+	
+	protected void connect() {
 		try {
 			activityClient.connect();
 		}
@@ -60,17 +72,23 @@ public class MovementMgr implements
 			Log.e("MovementMgr could not connect.", e.getMessage(), e);
 		}
 	}
-	protected void stopUpdates() {
-		// Disconnecting the client invalidates it.
-		if (activityRequestIntent != null) {
-			activityClient.removeActivityUpdates(activityRequestIntent);
-			activityRequestIntent = null;
 
-			// Display the request status
-			Toast.makeText(parentActivity, "Activity Updates stopped", Toast.LENGTH_SHORT).show();
-
-		}
+	protected void disconnect() {
 		activityClient.disconnect();
+	}
+
+	protected void startUpdates() {
+		if (requestType == null && !updatesInProgress ) {
+			requestType = RequestType.START;
+			connect();
+		}
+	}
+
+	protected void stopUpdates() {
+		if (requestType == null && updatesInProgress) {
+			requestType = RequestType.STOP;
+			connect();
+		}
 	}
 
 	/*
@@ -80,12 +98,17 @@ public class MovementMgr implements
 	 */
 	@Override
 	public void onConnected(Bundle dataBundle) {
-		// get pending intent for geofence transitions
-		if (activityRequestIntent == null) {
-			activityRequestIntent = getTransitionPendingIntent();
-		
-		    activityClient.requestActivityUpdates(DETECTION_INTERVAL_MILLISECONDS, activityRequestIntent);
-			
+		if (requestType == RequestType.STOP) {
+			activityClient.removeActivityUpdates(activityRequestIntent);
+			updatesInProgress = false;
+
+			// Display the request status
+			Toast.makeText(parentActivity, "Activity Updates stopped", Toast.LENGTH_SHORT).show();
+		}
+		else {
+			activityClient.requestActivityUpdates(DETECTION_INTERVAL_MILLISECONDS, activityRequestIntent);
+	        updatesInProgress = true;
+				
 			// Display the connection status
 			Toast.makeText(parentActivity, "Connected, Activity Updates started", Toast.LENGTH_SHORT).show();
 			
@@ -99,12 +122,10 @@ public class MovementMgr implements
 			NotificationManager mNotificationManager = 
 					(NotificationManager) parentActivity.getSystemService(Context.NOTIFICATION_SERVICE);		
 			mNotificationManager.notify(0, noti);
-			
-	        // Since the preceding call is synchronous, turn off the
-	        // in progress flag and disconnect the client
-	        inProgress = false;
-	        activityClient.disconnect();
 		}
+
+		requestType = null;
+		disconnect();
 	}
 
 	/*
@@ -115,8 +136,6 @@ public class MovementMgr implements
 	public void onDisconnected() {
 		// Display the connection status
 		Toast.makeText(parentActivity, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
-		inProgress = false;
-		activityClient = null;
 	}
 
 	/*
@@ -125,8 +144,7 @@ public class MovementMgr implements
 	 */
 	@Override
 	public void onConnectionFailed(ConnectionResult connectionResult) {
-        // Turn off the request flag
-        inProgress = false;
+		requestType = null;
 
 		/*
 		 * Google Play services can resolve some errors it detects.

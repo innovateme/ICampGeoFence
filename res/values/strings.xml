@@ -32,4 +32,5 @@
         <item>Exit</item>
         <item>Dwell</item>
     </string-array>
+    <string name="service_toggle_movemgr_label">Movement Manager Updates</string>
 </resources>

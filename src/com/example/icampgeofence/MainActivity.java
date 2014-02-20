@@ -19,9 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.ActivityRecognitionResult;
-import com.google.android.gms.location.DetectedActivity;
-
 public class MainActivity extends Activity {
 
     private LocationMgr locationMgr = null;
@@ -105,7 +102,6 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         locationMgr.connect();
-        movementMgr.startUpdates();
     }
 
     /*
@@ -113,7 +109,6 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onStop() {
-    	movementMgr.stopUpdates();
     	locationMgr.disconnect();
         super.onStop();
     }
@@ -146,6 +141,15 @@ public class MainActivity extends Activity {
         return true;
     }
     
+    @Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_toggle_movemgr);
+    	if (item != null) {
+    		item.setChecked(movementMgr.isUpdatesInProgress());
+    	}
+		return super.onPrepareOptionsMenu(menu);
+	}
+
 	public void addFenceActivity(View view) {
     	Intent intent = new Intent(this, AddFenceActivity.class);
     	startActivity(intent);
@@ -156,6 +160,15 @@ public class MainActivity extends Activity {
     	fenceListAdapter.notifyDataSetChanged();
     }
     
+	public void toggleMoveMgr() {
+		if (movementMgr.isUpdatesInProgress()) {
+			movementMgr.stopUpdates();
+		}
+		else {
+			movementMgr.startUpdates();
+		}
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -170,6 +183,8 @@ public class MainActivity extends Activity {
 	    	Intent intent = new Intent(this, AboutActivity.class);
 	    	startActivity(intent);
 			return true;
+		case R.id.action_toggle_movemgr:
+			toggleMoveMgr();
 		}
 		return super.onOptionsItemSelected(item);
 	}
