@@ -1,12 +1,14 @@
 package com.example.icampgeofence;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -23,8 +26,6 @@ public class MainActivity extends Activity {
     
     private MovementMgr movementMgr = null;
 
-    private Intent serviceIntent = null;
-    
     public FenceMgr getFenceList() {
 		return fenceMgr;
 	}
@@ -54,26 +55,20 @@ public class MainActivity extends Activity {
 		locationMgr = new LocationMgr(this);
 		
 		movementMgr = new MovementMgr(this);
+
+		// register to receive broadcasts for fence transitions
+        IntentFilter filter = new IntentFilter();
+//        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        BroadcastReceiver receiver = new ResponseReciever();
+        registerReceiver(receiver, filter);
 	}
 	
-	public void toggleService() {
-//		if (isServiceRunning()) {
-//			stopService(serviceIntent);
-//		}
-//		else {
-//			serviceIntent = new Intent(this, ReceiveTransitionsIntentService.class);
-//			startService(serviceIntent);
-//		}
-	}
-
-	private boolean isServiceRunning() {
-		ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-		for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-			if ("com.example.icampgeofence.ReceiveTransitionsIntentService".equals(service.service.getClassName())) {
-				return true;
-			}
-		}
-		return false;
+	public class ResponseReciever extends BroadcastReceiver {
+	   @Override
+	    public void onReceive(Context context, Intent intent) {
+			Log.d("MAIN_ACTIVITY", "Received broadcast intent!");
+			Toast.makeText(context, "Received transition broadcast!", Toast.LENGTH_SHORT).show();
+	    }
 	}
 	
     /*
@@ -124,15 +119,6 @@ public class MainActivity extends Activity {
         return true;
     }
     
-    @Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_toggle_service);
-    	if (item != null) {
-    		item.setChecked(isServiceRunning());
-    	}
-		return super.onPrepareOptionsMenu(menu);
-	}
-
 	public void addFenceActivity(View view) {
     	Intent intent = new Intent(this, AddFenceActivity.class);
     	startActivity(intent);
@@ -157,8 +143,6 @@ public class MainActivity extends Activity {
 	    	Intent intent = new Intent(this, AboutActivity.class);
 	    	startActivity(intent);
 			return true;
-		case R.id.action_toggle_service:
-			toggleService();
 		}
 		return super.onOptionsItemSelected(item);
 	}
