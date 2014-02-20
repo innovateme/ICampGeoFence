@@ -24,6 +24,8 @@ public class LocationMgr  implements
 	GooglePlayServicesClient.ConnectionCallbacks,
 	GooglePlayServicesClient.OnConnectionFailedListener {
 
+	public static final String TRANSITION_INTENT_ACTION = "geofence_transition";
+
 	/*
 	 * Define a request code to send to Google Play services
 	 * This code is returned in Activity.onActivityResult
@@ -140,6 +142,7 @@ public class LocationMgr  implements
     private PendingIntent getTransitionPendingIntent() {
         // Create an explicit Intent
         Intent intent = new Intent(parentActivity, ReceiveTransitionsIntentService.class);
+        intent.setAction(TRANSITION_INTENT_ACTION);
         /*
          * Return the PendingIntent
          */

@@ -6,7 +6,7 @@ import android.util.Log;
 
 public class ReceiveTransitionsIntentService extends IntentService {
 
-    private static final String TAG = "ReceiveTransitionsIntentService";
+	private static final String TAG = "ReceiveTransitionsIntentService";
 
     public ReceiveTransitionsIntentService() {
 		super(TAG);
@@ -16,8 +16,12 @@ public class ReceiveTransitionsIntentService extends IntentService {
 	protected void onHandleIntent(Intent transitionIntent) {
 		Log.d(TAG, "onHandleIntent running - received geofence intent!");
 
-		// rebroadcast the intent so the UI can receive it
-		sendBroadcast(transitionIntent);
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction(transitionIntent.getAction());
+		broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+		sendBroadcast(broadcastIntent);
+
+//		sendBroadcast(transitionIntent);
 	}
 
 //	@Override

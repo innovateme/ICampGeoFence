@@ -57,8 +57,8 @@ public class MainActivity extends Activity {
 		movementMgr = new MovementMgr(this);
 
 		// register to receive broadcasts for fence transitions
-        IntentFilter filter = new IntentFilter();
-//        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        IntentFilter filter = new IntentFilter(LocationMgr.TRANSITION_INTENT_ACTION);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
         BroadcastReceiver receiver = new ResponseReciever();
         registerReceiver(receiver, filter);
 	}
