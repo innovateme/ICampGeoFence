@@ -84,6 +84,8 @@ public class Fence implements Comparable<Fence> {
 		.setTransitionTypes(transition)
 		.setCircularRegion(lat, lon, radius)
 		.setExpirationDuration(duration)
+		.setLoiteringDelay(30000)
+		.setNotificationResponsiveness(5000)
 		.build();
 	}
 

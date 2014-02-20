@@ -3,49 +3,21 @@ package com.example.icampgeofence;
 import android.app.IntentService;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 public class ReceiveTransitionsIntentService extends IntentService {
 
     public ReceiveTransitionsIntentService() {
 		super("ReceiveTransitionsIntentService");
-		// TODO Auto-generated constructor stub
 	}
 
-	private static final String TAG = "ReceiveTransitionsIntentService";
-    MediaPlayer player;
+	private MediaPlayer player;
+    private static final String TAG = "ReceiveTransitionsIntentService";
 
 	@Override
 	protected void onHandleIntent(Intent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
-	@Override
-	public void onCreate() {
-		Toast.makeText(this, "ReceiveTransitionsIntentService Created", Toast.LENGTH_LONG).show();
-		Log.d(TAG, "onCreate");
+		Log.d(TAG, "onHandleIntent running - received geofence intent!");
 		player = MediaPlayer.create(this, R.raw.ziegengatter);
 		player.setLooping(false); // Set looping
 	}
-	@Override
-	public void onDestroy() {
-		Toast.makeText(this, "My Service Stopped", Toast.LENGTH_LONG).show();
-		Log.d(TAG, "onDestroy");
-		player.stop();
-	}
-
-	@Override
-	public void onStart(Intent intent, int startid) {
-		Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
-		Log.d(TAG, "onStart");
-		player.start();
-	}
-
 }

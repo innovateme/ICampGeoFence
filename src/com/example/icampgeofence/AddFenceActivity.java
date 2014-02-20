@@ -1,6 +1,7 @@
 package com.example.icampgeofence;
 
 import android.app.Activity;
+import android.hardware.GeomagneticField;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -49,7 +50,8 @@ public class AddFenceActivity extends Activity {
 				Double.parseDouble(newLat),
 				Double.parseDouble(newLong),
 				Float.parseFloat(newRadius),
-				1000000, Geofence.GEOFENCE_TRANSITION_ENTER);
+				Geofence.NEVER_EXPIRE,
+				Geofence.GEOFENCE_TRANSITION_DWELL);
 
 	    locationMgr.addGeofence(f);
 		NavUtils.navigateUpFromSameTask(this);

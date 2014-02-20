@@ -53,13 +53,13 @@ public class MainActivity extends Activity {
 	}
 	
 	public void toggleService() {
-		if (isServiceRunning()) {
-			stopService(serviceIntent);
-		}
-		else {
-			serviceIntent = new Intent(this, ReceiveTransitionsIntentService.class);
-			startService(serviceIntent);
-		}
+//		if (isServiceRunning()) {
+//			stopService(serviceIntent);
+//		}
+//		else {
+//			serviceIntent = new Intent(this, ReceiveTransitionsIntentService.class);
+//			startService(serviceIntent);
+//		}
 	}
 
 	private boolean isServiceRunning() {

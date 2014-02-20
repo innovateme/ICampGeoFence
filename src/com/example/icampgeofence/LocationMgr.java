@@ -147,7 +147,7 @@ public class LocationMgr  implements
                 parentActivity,
                 0,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_CANCEL_CURRENT);
     }
     
     public void addGeofence(final Fence fence) {
