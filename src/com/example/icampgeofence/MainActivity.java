@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
 	    public void onReceive(Context context, Intent intent) {
 			Log.d("MAIN_ACTIVITY", "Received broadcast intent!");
 			Toast.makeText(context, "Received transition broadcast!", Toast.LENGTH_SHORT).show();
-			MediaPlayer player = MediaPlayer.create(context, R.raw.ziegengatter);
+			MediaPlayer player = MediaPlayer.create(context, R.raw.alarm);
 			player.setLooping(false); // Set looping
 			player.start();
 	    }
