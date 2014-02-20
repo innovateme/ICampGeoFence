@@ -20,6 +20,8 @@ public class MainActivity extends Activity {
     private LocationMgr locationMgr = null;
     private FenceMgr fenceMgr;
     private ArrayAdapter<Fence> fenceListAdapter;
+    
+    private MovementMgr movementMgr = null;
 
     private Intent serviceIntent = null;
     
@@ -50,6 +52,8 @@ public class MainActivity extends Activity {
         });
 
 		locationMgr = new LocationMgr(this);
+		
+		movementMgr = new MovementMgr(this);
 	}
 	
 	public void toggleService() {
@@ -79,6 +83,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         locationMgr.connect();
+        movementMgr.connect();
     }
 
     /*
@@ -86,6 +91,7 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onStop() {
+    	movementMgr.disconnect();
     	locationMgr.disconnect();
         super.onStop();
     }
