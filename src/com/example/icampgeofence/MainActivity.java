@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.ActivityRecognitionResult;
+import com.google.android.gms.location.DetectedActivity;
+
 public class MainActivity extends Activity {
 
     private LocationMgr locationMgr = null;
@@ -27,14 +31,18 @@ public class MainActivity extends Activity {
     
     private MovementMgr movementMgr = null;
     private MediaPlayer player;
-    		
+    private TextToSpeech tts = null;    
+
+    private BroadcastReceiver activityReceiver = new ActivityReciever();
+    private BroadcastReceiver transReceiver = new FenceReciever();
+
     public FenceMgr getFenceList() {
 		return fenceMgr;
 	}
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         FenceMgr.init(this);
@@ -58,40 +66,68 @@ public class MainActivity extends Activity {
 		
 		movementMgr = new MovementMgr(this);
 
+		tts = new TextToSpeech(this, new SpeechInitListener());
+
 		// register to receive broadcasts for fence transitions
-        IntentFilter filter = new IntentFilter(LocationMgr.TRANSITION_INTENT_ACTION);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        BroadcastReceiver receiver = new ResponseReciever();
-        registerReceiver(receiver, filter);
+        IntentFilter transFilter = new IntentFilter(LocationMgr.TRANSITION_INTENT_ACTION);
+        transFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(transReceiver, transFilter);
+
+		// register to receive broadcasts for activity updates
+        IntentFilter activityFilter = new IntentFilter(MovementMgr.ACTIVITY_INTENT_ACTION);
+        activityFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(activityReceiver, activityFilter);
 	}
 	
-	public class ResponseReciever extends BroadcastReceiver {
+	public class SpeechInitListener implements TextToSpeech.OnInitListener {
+		@Override
+		public void onInit(int status) {
+		}
+	}
+
+	public class FenceReciever extends BroadcastReceiver {
+		   @Override
+		    public void onReceive(Context context, Intent intent) {
+				Log.d("MAIN_ACTIVITY", "Received geofence broadcast intent!");
+				Toast.makeText(context, "Received geofence broadcast!", Toast.LENGTH_SHORT).show();
+				MediaPlayer player = MediaPlayer.create(context, R.raw.alarm);
+				player.setLooping(false); // Set looping
+				player.start();
+		   }
+	}
+	
+	public class ActivityReciever extends BroadcastReceiver {
 	   @Override
 	    public void onReceive(Context context, Intent intent) {
-			Log.d("MAIN_ACTIVITY", "Received broadcast intent!");
-			Toast.makeText(context, "Received transition broadcast!", Toast.LENGTH_SHORT).show();
-			MediaPlayer player = MediaPlayer.create(context, R.raw.alarm);
+			Log.d("MAIN_ACTIVITY", "Received Activity broadcast intent!");
+			Toast.makeText(context, "Received Activity broadcast!", Toast.LENGTH_SHORT).show();
+			MediaPlayer player = MediaPlayer.create(context, R.raw.ziegengatter);
 			player.setLooping(false); // Set looping
-			player.start();
+//			player.start();
 	        // If the incoming intent contains an update
-/*	        if (ActivityRecognitionResult.hasResult(intent)) {
+	        if (ActivityRecognitionResult.hasResult(intent)) {
 	            // Get the update
 	            ActivityRecognitionResult result =
 	                    ActivityRecognitionResult.extractResult(intent);
 	            // Get the most probable activity
 	            DetectedActivity mostProbableActivity =
 	                    result.getMostProbableActivity();
+
+	            Log.d("MAIN_ACTIVITY", "activity: " + mostProbableActivity);
+	            
 	            // Get the probability that this activity is the
 	            // the user's actual activity
 	            int confidence = mostProbableActivity.getConfidence();
 	            // Get an integer describing the type of activity
 	            int activityType = mostProbableActivity.getType();
-//	            String activityName = getNameFromType(activityType);
+	            
+	            ActivityType type = ActivityType.fromTypeId(mostProbableActivity.getType());
+	            tts.speak("Current activity type is " + type, TextToSpeech.QUEUE_ADD, null);
+	        
 	        } else {
 				Log.d("MAIN_ACTIVITY", "Received broadcast intent!");
 				Toast.makeText(context, "Received transition broadcast!", Toast.LENGTH_SHORT).show();
 	        }
-*/
 	    }
 	}
 	
@@ -161,6 +197,8 @@ public class MainActivity extends Activity {
     }
     
 	public void toggleMoveMgr() {
+        tts.speak("Toggling activity updates", TextToSpeech.QUEUE_ADD, null);
+
 		if (movementMgr.isUpdatesInProgress()) {
 			movementMgr.stopUpdates();
 		}
@@ -188,4 +226,14 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	@Override
+	protected void onDestroy() {
+        unregisterReceiver(transReceiver);
+        unregisterReceiver(activityReceiver);
+        tts.shutdown();
+        super.onDestroy();
+	}
+	
+	
 }

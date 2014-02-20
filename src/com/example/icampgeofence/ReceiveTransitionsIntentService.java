@@ -19,21 +19,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
 		Intent broadcastIntent = new Intent();
 		broadcastIntent.setAction(transitionIntent.getAction());
 		broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+		broadcastIntent.putExtras(transitionIntent);
 		sendBroadcast(broadcastIntent);
-
-//		sendBroadcast(transitionIntent);
 	}
-
-//	@Override
-//	protected void onHandleIntent(Intent intent) {
-////	    if (ActivityRecognitionResult.hasResult(intent)) {
-////	    ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-////	    // Put your application specific logic here (i.e. result.getMostProbableActivity())
-////}
-//		
-//		Log.d(TAG, "onHandleIntent running - received geofence intent!");
-//		player = MediaPlayer.create(this, R.raw.ziegengatter);
-//		player.setLooping(false); // Set looping
-//	}
-
 }

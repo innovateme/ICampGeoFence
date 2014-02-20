@@ -20,6 +20,8 @@ public class MovementMgr implements
 	GooglePlayServicesClient.ConnectionCallbacks,
 	GooglePlayServicesClient.OnConnectionFailedListener {
 
+	public static final String ACTIVITY_INTENT_ACTION = "activity_update";
+
 	/*
 	 * Define a request code to send to Google Play services
 	 * This code is returned in Activity.onActivityResult
@@ -188,6 +190,7 @@ public class MovementMgr implements
     private PendingIntent getTransitionPendingIntent() {
         // Create an explicit Intent
         Intent intent = new Intent(parentActivity, ReceiveTransitionsIntentService.class);
+        intent.setAction(ACTIVITY_INTENT_ACTION);
 
         return PendingIntent.getService(
                 parentActivity,
