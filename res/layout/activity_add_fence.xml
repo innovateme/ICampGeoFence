@@ -19,12 +19,27 @@
 	        android:layout_gravity="right|center_vertical"
 		    style="@android:style/TextAppearance.DeviceDefault.Medium"
 	        android:text="@string/fenceName_prompt" />
+
 		
 	    <EditText android:id="@+id/fence_name"
 		    style="@android:style/TextAppearance.DeviceDefault.Medium"  
 	        android:hint="@string/fenceName_hint"
 	        android:inputType="text" />
-	    
+
+	    <TextView
+		    android:layout_marginTop="10dp"
+		    android:layout_column="0"
+	        android:layout_gravity="right|center_vertical"
+		    style="@android:style/TextAppearance.DeviceDefault.Medium"
+	        android:text="@string/fenceType_prompt" />
+	    	    	    	    
+	    <Spinner
+	        android:id="@+id/fence_type"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:entries="@array/GeoFenceType_array"
+	        android:prompt="@string/selectGeoFenceType" />
+	    	    
 		<TextView
 		    android:layout_marginTop="10dp"
 		    android:layout_column="0"
@@ -64,7 +79,7 @@
 		<ImageButton
 		    android:layout_column="1"
 		    android:layout_gravity="left|center_vertical"
-		    android:layout_row="5"
+		    android:layout_row="6"
 		    android:contentDescription="@string/current_loc_btn_desc"
 		    android:onClick="useCurrentLocation"
 		    android:src="@drawable/gps13" />
@@ -73,7 +88,7 @@
 		    android:id="@+id/textView1"
 		    android:layout_column="0"
 		    android:layout_gravity="center"
-		    android:layout_row="5"
+		    android:layout_row="6"
 		    android:text="@string/useCurrentLocation_label"
 		    android:textAppearance="?android:attr/textAppearanceSmall" />
 		
@@ -82,7 +97,7 @@
 		    android:layout_column="1"
 		    android:layout_gravity="top"
 		    android:layout_marginTop="40dp"
-		    android:layout_row="6"
+		    android:layout_row="7"
 		    android:onClick="addFence"
 		    android:text="@string/add_btn_label" />
 

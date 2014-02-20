@@ -23,6 +23,13 @@
     <string name="confirm_fence_delete_prompt">Permanently delete geofence?</string>
     <string name="useCurrentLocation_label">(Use Current Location)</string>
     <string name="fenceName_prompt">GeoFence Name</string>
+    <string name="fenceType_prompt">GeoFence Type</string>
     <string name="fenceName_hint">e.g.:  Home</string>
     <string name="service_toggle_menu_label">Geofence Intent Service</string>
+    <string name="selectGeoFenceType">Select the GeoFence type</string>
+    <string-array name="GeoFenceType_array">
+        <item>Enter</item>
+        <item>Exit</item>
+        <item>Dwell</item>
+    </string-array>
 </resources>

@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
@@ -36,6 +37,8 @@ public class AddFenceActivity extends Activity {
 	public void addFence(View view) {
 		// add geofence storage and call APIs
 		String newFenceName = ((EditText) findViewById(R.id.fence_name)).getText().toString();
+		Spinner spinner = (Spinner) findViewById(R.id.fence_type);
+		String newFenceType = spinner.getSelectedItem().toString();
 	    String newLat = ((EditText) findViewById(R.id.new_lat)).getText().toString();
 	    String newLong = ((EditText) findViewById(R.id.new_long)).getText().toString();
 	    String newRadius = ((EditText) findViewById(R.id.new_radius)).getText().toString();
@@ -43,14 +46,23 @@ public class AddFenceActivity extends Activity {
 	        Toast.makeText(this, "Invalid geofence params", Toast.LENGTH_SHORT).show();
 	        return;
 	    }
-
+        
+        int selectedFenceType;
+        if (newFenceType == "Exit"){
+        	selectedFenceType = Geofence.GEOFENCE_TRANSITION_EXIT;
+        }else if (newFenceType == "Enter"){
+        	selectedFenceType = Geofence.GEOFENCE_TRANSITION_ENTER;
+        }else {
+        	selectedFenceType = Geofence.GEOFENCE_TRANSITION_DWELL;
+        }
+        		
 	    Fence f = new Fence(
 				newFenceName,
 				Double.parseDouble(newLat),
 				Double.parseDouble(newLong),
 				Float.parseFloat(newRadius),
 				Geofence.NEVER_EXPIRE,
-				Geofence.GEOFENCE_TRANSITION_DWELL);
+				selectedFenceType);
 
 	    locationMgr.addGeofence(f);
 		NavUtils.navigateUpFromSameTask(this);
