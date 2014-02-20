@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +26,8 @@ public class MainActivity extends Activity {
     private ArrayAdapter<Fence> fenceListAdapter;
     
     private MovementMgr movementMgr = null;
-
+    private MediaPlayer player;
+    		
     public FenceMgr getFenceList() {
 		return fenceMgr;
 	}
@@ -68,6 +70,9 @@ public class MainActivity extends Activity {
 	    public void onReceive(Context context, Intent intent) {
 			Log.d("MAIN_ACTIVITY", "Received broadcast intent!");
 			Toast.makeText(context, "Received transition broadcast!", Toast.LENGTH_SHORT).show();
+			MediaPlayer player = MediaPlayer.create(context, R.raw.ziegengatter);
+			player.setLooping(false); // Set looping
+			player.start();
 	    }
 	}
 	
