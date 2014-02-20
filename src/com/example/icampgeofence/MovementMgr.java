@@ -26,6 +26,7 @@ public class MovementMgr implements
 	 */
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	private final static int REQUEST_CODE_RECOVER_PLAY_SERVICES = 1001;
+	private final static int DETECTION_INTERVAL_MILLISECONDS = 30000;
 
 	private final Activity parentActivity;
 	private ActivityRecognitionClient activityClient = null;
@@ -50,7 +51,7 @@ public class MovementMgr implements
 			return activityClient;
 	}
 
-	protected void connect() {
+	protected void startUpdates() {
 		// Connect the client.
 		try {
 			activityClient.connect();
@@ -59,7 +60,7 @@ public class MovementMgr implements
 			Log.e("MovementMgr could not connect.", e.getMessage(), e);
 		}
 	}
-	protected void disconnect() {
+	protected void stopUpdates() {
 		// Disconnecting the client invalidates it.
 		if (activityRequestIntent != null) {
 			activityClient.removeActivityUpdates(activityRequestIntent);
@@ -82,23 +83,28 @@ public class MovementMgr implements
 		// get pending intent for geofence transitions
 		if (activityRequestIntent == null) {
 			activityRequestIntent = getTransitionPendingIntent();
+		
+		    activityClient.requestActivityUpdates(DETECTION_INTERVAL_MILLISECONDS, activityRequestIntent);
+			
+			// Display the connection status
+			Toast.makeText(parentActivity, "Connected, Activity Updates started", Toast.LENGTH_SHORT).show();
+			
+			Notification noti = new Notification.Builder(parentActivity)
+	        .setContentTitle("Activity Updates started")
+	        .setContentText("Google Play Services is here to help")
+	        .setSmallIcon(R.drawable.ic_launcher)
+	//        .setLargeIcon(aBitmap)
+	        .build();
+	
+			NotificationManager mNotificationManager = 
+					(NotificationManager) parentActivity.getSystemService(Context.NOTIFICATION_SERVICE);		
+			mNotificationManager.notify(0, noti);
+			
+	        // Since the preceding call is synchronous, turn off the
+	        // in progress flag and disconnect the client
+	        inProgress = false;
+	        activityClient.disconnect();
 		}
-		
-	    activityClient.requestActivityUpdates(30000, activityRequestIntent);
-		
-		// Display the connection status
-		Toast.makeText(parentActivity, "Connected, Activity Updates started", Toast.LENGTH_SHORT).show();
-		
-		Notification noti = new Notification.Builder(parentActivity)
-        .setContentTitle("Activity Updates started")
-        .setContentText("Google Play Services is here to help")
-        .setSmallIcon(R.drawable.ic_launcher)
-//        .setLargeIcon(aBitmap)
-        .build();
-
-		NotificationManager mNotificationManager = 
-				(NotificationManager) parentActivity.getSystemService(Context.NOTIFICATION_SERVICE);		
-		mNotificationManager.notify(0, noti);
 	}
 
 	/*
@@ -109,6 +115,8 @@ public class MovementMgr implements
 	public void onDisconnected() {
 		// Display the connection status
 		Toast.makeText(parentActivity, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
+		inProgress = false;
+		activityClient = null;
 	}
 
 	/*
@@ -117,6 +125,9 @@ public class MovementMgr implements
 	 */
 	@Override
 	public void onConnectionFailed(ConnectionResult connectionResult) {
+        // Turn off the request flag
+        inProgress = false;
+
 		/*
 		 * Google Play services can resolve some errors it detects.
 		 * If the error has a resolution, try sending an Intent to

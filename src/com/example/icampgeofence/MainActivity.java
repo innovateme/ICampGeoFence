@@ -19,6 +19,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.ActivityRecognitionResult;
+import com.google.android.gms.location.DetectedActivity;
+
 public class MainActivity extends Activity {
 
     private LocationMgr locationMgr = null;
@@ -73,6 +76,25 @@ public class MainActivity extends Activity {
 			MediaPlayer player = MediaPlayer.create(context, R.raw.alarm);
 			player.setLooping(false); // Set looping
 			player.start();
+	        // If the incoming intent contains an update
+/*	        if (ActivityRecognitionResult.hasResult(intent)) {
+	            // Get the update
+	            ActivityRecognitionResult result =
+	                    ActivityRecognitionResult.extractResult(intent);
+	            // Get the most probable activity
+	            DetectedActivity mostProbableActivity =
+	                    result.getMostProbableActivity();
+	            // Get the probability that this activity is the
+	            // the user's actual activity
+	            int confidence = mostProbableActivity.getConfidence();
+	            // Get an integer describing the type of activity
+	            int activityType = mostProbableActivity.getType();
+//	            String activityName = getNameFromType(activityType);
+	        } else {
+				Log.d("MAIN_ACTIVITY", "Received broadcast intent!");
+				Toast.makeText(context, "Received transition broadcast!", Toast.LENGTH_SHORT).show();
+	        }
+*/
 	    }
 	}
 	
@@ -83,7 +105,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         locationMgr.connect();
-        movementMgr.connect();
+        movementMgr.startUpdates();
     }
 
     /*
@@ -91,7 +113,7 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onStop() {
-    	movementMgr.disconnect();
+    	movementMgr.stopUpdates();
     	locationMgr.disconnect();
         super.onStop();
     }
