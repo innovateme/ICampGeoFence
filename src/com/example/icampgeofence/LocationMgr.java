@@ -5,8 +5,12 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -74,6 +78,35 @@ public class LocationMgr  implements
 		// Disconnecting the client invalidates it.
 		locationClient.disconnect();
 	}
+
+	public void setMockLocation(double latitude, double longitude, float accuracy) {
+	    LocationManager lm = (LocationManager) parentActivity.getSystemService(Context.LOCATION_SERVICE);
+	    lm.addTestProvider(LocationManager.GPS_PROVIDER,
+	                        "requiresNetwork" == "",
+	                        "requiresSatellite" == "",
+	                        "requiresCell" == "",
+	                        "hasMonetaryCost" == "",
+	                        "supportsAltitude" == "",
+	                        "supportsSpeed" == "",
+	                        "supportsBearing" == "",
+	                         android.location.Criteria.NO_REQUIREMENT,
+	                         android.location.Criteria.ACCURACY_FINE);
+
+	    Location newLocation = new Location(LocationManager.GPS_PROVIDER);
+
+	    newLocation.setLatitude(latitude);
+	    newLocation.setLongitude(longitude);
+	    newLocation.setAccuracy(accuracy);
+
+	    lm.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+
+	    lm.setTestProviderStatus(LocationManager.GPS_PROVIDER,
+	                             LocationProvider.AVAILABLE,
+	                             null,System.currentTimeMillis());
+
+	    lm.setTestProviderLocation(LocationManager.GPS_PROVIDER, newLocation);
+	}
+
 
 	/*
 	 * Called by Location Services when the request to connect the
