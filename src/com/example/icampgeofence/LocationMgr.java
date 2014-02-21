@@ -42,6 +42,9 @@ public class LocationMgr  implements
     // Flag that indicates if a request is underway.
     private boolean inProgress = false;
 
+    public interface OnDeleteFenceListener {
+    	void onDeleteFence(String id);
+    }
 	
     public LocationMgr(Activity parent) {
 		parentActivity = parent;
@@ -187,16 +190,17 @@ public class LocationMgr  implements
 		});
 	}
     
-    public void removeGeofence(final Fence fence) {
+    public void removeGeofence(final Fence fence, final OnDeleteFenceListener listener) {
 		List<String> gfList = new ArrayList<String>();
 		gfList.add(fence.getId());
         locationClient.removeGeofences(gfList, new OnRemoveGeofencesResultListener() {
 			
 			@Override
 			public void onRemoveGeofencesByRequestIdsResult(int statusCode, String[] geofenceRequestIds) {
-				// if successful, persist the new Fence
+				// if successful, persist the change
 		        if (LocationStatusCodes.SUCCESS == statusCode) {
 		    		FenceMgr.getDefault().delete(fence);
+		    		listener.onDeleteFence(fence.getId());
 		    		Toast.makeText(parentActivity, "Removed geofence named " + fence.getName(), Toast.LENGTH_SHORT).show();
 		        }
 		        else {

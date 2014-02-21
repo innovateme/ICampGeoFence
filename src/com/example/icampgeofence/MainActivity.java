@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.icampgeofence.LocationMgr.OnDeleteFenceListener;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 
@@ -101,9 +102,7 @@ public class MainActivity extends Activity {
 	    public void onReceive(Context context, Intent intent) {
 			Log.d("MAIN_ACTIVITY", "Received Activity broadcast intent!");
 			Toast.makeText(context, "Received Activity broadcast!", Toast.LENGTH_SHORT).show();
-			MediaPlayer player = MediaPlayer.create(context, R.raw.ziegengatter);
-			player.setLooping(false); // Set looping
-//			player.start();
+
 	        // If the incoming intent contains an update
 	        if (ActivityRecognitionResult.hasResult(intent)) {
 	            // Get the update
@@ -150,16 +149,24 @@ public class MainActivity extends Activity {
     }
 
 	private void deleteFenceWithConfirm(final Fence fence) {
+		DialogInterface.OnClickListener deleteListener = new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				locationMgr.removeGeofence(fence, new OnDeleteFenceListener() {
+
+					@Override
+					public void onDeleteFence(String id) {
+						fenceListAdapter.notifyDataSetChanged();
+					}
+				});
+			}
+		};
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    builder.setMessage("Are you sure you want to delete this geofence?")
 	           .setCancelable(false)
-	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	               public void onClick(DialogInterface dialog, int id) {
-	            	   locationMgr.removeGeofence(fence);
-	            	   // FIXME: this will not refresh the list until the main activity is redisplayed
-	            	   fenceListAdapter.notifyDataSetChanged();
-	               }
-	           })
+	           .setPositiveButton("Yes", deleteListener)
 	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
 	               public void onClick(DialogInterface dialog, int id) {
 	                    dialog.cancel();
