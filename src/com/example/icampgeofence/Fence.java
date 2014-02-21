@@ -13,6 +13,8 @@ public class Fence implements Comparable<Fence> {
 	private final float radius;
 	private final long duration;
 	private final int transition;
+	// TODO: automatic resetting?
+	private boolean triggered = false;
 
 	/**
 	 * @param requestId The Geofence's request ID
@@ -70,6 +72,14 @@ public class Fence implements Comparable<Fence> {
 
 	public float getRadius() {
 		return radius;
+	}
+
+	public boolean isTriggered() {
+		return triggered;
+	}
+
+	public void setTriggered(boolean state) {
+		triggered = state;
 	}
 
 	/**

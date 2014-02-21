@@ -28,6 +28,10 @@ public class FenceListAdapter extends ArrayAdapter<Fence> {
 		View rowView = inflater.inflate(R.layout.fence_list_item, parent, false);
 		Fence f = items.get(position);
 
+		if (f.isTriggered()) {
+			rowView.setBackgroundResource(R.drawable.border_ui);
+		}
+
 		TextView nameView = (TextView) rowView.findViewById(R.id.fence_list_item_name);
 		nameView.setText(f.getName());
 

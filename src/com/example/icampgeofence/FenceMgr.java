@@ -101,4 +101,14 @@ public class FenceMgr {
 	public List<Fence> getFences() {
 		return fences;
 	}
+
+	public Fence getFenceById(String id) {
+		Fence match = null;
+		for (Fence f : fences) {
+			if (f.getId().equals(id)) {
+				match = f;
+			}
+		}
+		return match;
+	}
 }

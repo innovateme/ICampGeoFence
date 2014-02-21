@@ -1,5 +1,7 @@
 package com.example.icampgeofence;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -23,6 +25,8 @@ import android.widget.Toast;
 import com.example.icampgeofence.LocationMgr.OnDeleteFenceListener;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.LocationClient;
 
 public class MainActivity extends Activity {
 
@@ -87,14 +91,50 @@ public class MainActivity extends Activity {
 	}
 
 	public class FenceReciever extends BroadcastReceiver {
-		   @Override
-		    public void onReceive(Context context, Intent intent) {
-				Log.d("MAIN_ACTIVITY", "Received geofence broadcast intent!");
-				Toast.makeText(context, "Received geofence broadcast!", Toast.LENGTH_SHORT).show();
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d("MAIN_ACTIVITY", "Received geofence broadcast intent!");
+			Toast.makeText(context, "Received geofence broadcast!", Toast.LENGTH_SHORT).show();
+
+			// First check for errors
+			if (LocationClient.hasError(intent)) {
+				// Get the error code with a static method
+				int errorCode = LocationClient.getErrorCode(intent);
+				// Log the error
+				Log.e("MAIN_ACTIVITY",
+						"Location Services error: " +
+								Integer.toString(errorCode));
+			}
+			else {
+				// Get the type of transition (entry or exit)
+				int transitionType = LocationClient.getGeofenceTransition(intent);
+				// Test that a valid transition was reported
+				if (transitionType == Geofence.GEOFENCE_TRANSITION_ENTER
+					|| transitionType == Geofence.GEOFENCE_TRANSITION_EXIT
+					|| transitionType == Geofence.GEOFENCE_TRANSITION_DWELL) {
+					List<Geofence> triggerList =
+							LocationClient.getTriggeringGeofences(intent);
+
+					for (Geofence gf : triggerList) {
+						Fence fence = FenceMgr.getDefault().getFenceById(gf.getRequestId());
+						if (fence != null) {
+							fence.setTriggered(true);
+							fenceListAdapter.notifyDataSetChanged();
+						}
+					}
+				}
+				else {
+					// An invalid transition was reported
+					Log.e("MAIN_ACTIVITY",
+							"Geofence transition error: " +
+									Integer.toString(transitionType));
+				}
+
 				MediaPlayer player = MediaPlayer.create(context, R.raw.alarm);
 				player.setLooping(false); // Set looping
 				player.start();
 		   }
+		}
 	}
 	
 	public class ActivityReciever extends BroadcastReceiver {
