@@ -24,7 +24,7 @@
 	    <EditText android:id="@+id/fence_name"
 		    style="@android:style/TextAppearance.DeviceDefault.Medium"  
 	        android:hint="@string/fenceName_hint"
-	        android:inputType="text" />
+	        android:inputType="textCapSentences" />
 
 	    <TextView
 		    android:layout_marginTop="10dp"
@@ -35,8 +35,6 @@
 	    	    	    	    
 	    <Spinner
 	        android:id="@+id/fence_type"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
 	        android:entries="@array/GeoFenceType_array"
 	        android:prompt="@string/selectGeoFenceType" />
 	    	    
@@ -50,7 +48,7 @@
 	    <EditText android:id="@+id/new_lat"
 		    style="@android:style/TextAppearance.DeviceDefault.Medium"
 	        android:hint="@string/lat_hint"
-	        android:inputType="numberDecimal" />
+	        android:inputType="numberDecimal|numberSigned" />
 		
 	    <TextView
 		    android:layout_marginTop="10dp"
@@ -62,7 +60,7 @@
 		<EditText android:id="@+id/new_long"
 		    style="@android:style/TextAppearance.DeviceDefault.Medium"
 	        android:hint="@string/long_hint"
-	        android:inputType="numberDecimal" />
+	        android:inputType="numberDecimal|numberSigned" />
 					
 		<TextView
 		    android:layout_marginTop="10dp"
