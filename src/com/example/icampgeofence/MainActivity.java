@@ -51,7 +51,7 @@ public class MainActivity extends Activity {
 		
 		ListView fenceListView = (ListView)findViewById(R.id.fence_list);
 
-		fenceListAdapter = new ArrayAdapter<Fence>(this, android.R.layout.simple_list_item_1, fenceMgr.getFences());
+		fenceListAdapter = new FenceListAdapter(this, fenceMgr.getFences());
 		fenceListView.setAdapter(fenceListAdapter);
 		
 		fenceListView.setOnItemLongClickListener(new OnItemLongClickListener() {
