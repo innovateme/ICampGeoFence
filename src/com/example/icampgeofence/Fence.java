@@ -12,9 +12,9 @@ public class Fence implements Comparable<Fence> {
 	private final double lon;
 	private final float radius;
 	private final long duration;
-	private final int transition;
 	// TODO: automatic resetting?
-	private boolean triggered = false;
+	private final int transition;
+	private transient boolean triggered = false;
 
 	/**
 	 * @param requestId The Geofence's request ID

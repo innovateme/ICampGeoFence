@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -35,7 +36,7 @@ public class MainActivity extends Activity {
     private ArrayAdapter<Fence> fenceListAdapter;
     
     private MovementMgr movementMgr = null;
-    private MediaPlayer player;
+    private MediaPlayer alarmPlayer;
     private TextToSpeech tts = null;    
 
     private BroadcastReceiver activityReceiver = new ActivityReciever();
@@ -67,9 +68,24 @@ public class MainActivity extends Activity {
             }
         });
 
+        fenceListView.setOnItemClickListener(new OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+                Fence selected = fenceListAdapter.getItem(pos);
+                if (selected.isTriggered()) {
+                    selected.setTriggered(false);
+                    fenceListAdapter.notifyDataSetChanged();
+                    alarmPlayer.stop();
+                }
+            }
+        });
+
 		locationMgr = new LocationMgr(this);
 		
 		movementMgr = new MovementMgr(this);
+
+		alarmPlayer = MediaPlayer.create(this, R.raw.alarm);
+		alarmPlayer.setLooping(true);
 
 		tts = new TextToSpeech(this, new SpeechInitListener());
 
@@ -130,9 +146,7 @@ public class MainActivity extends Activity {
 									Integer.toString(transitionType));
 				}
 
-				MediaPlayer player = MediaPlayer.create(context, R.raw.alarm);
-				player.setLooping(false); // Set looping
-				player.start();
+				alarmPlayer.start();
 		   }
 		}
 	}
