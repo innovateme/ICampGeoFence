@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -77,6 +78,9 @@ public class MainActivity extends Activity {
                     fenceListAdapter.notifyDataSetChanged();
                     alarmPlayer.stop();
                 }
+                else {
+                	showFenceOnMap(selected);
+                }
             }
         });
 
@@ -98,6 +102,16 @@ public class MainActivity extends Activity {
         IntentFilter activityFilter = new IntentFilter(MovementMgr.ACTIVITY_INTENT_ACTION);
         activityFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(activityReceiver, activityFilter);
+	}
+	
+	public void showFenceOnMap(Fence fence) {
+		String geo = String.format("geo:0,0?q=%f,%f(%s)", fence.getLat(), fence.getLon(), fence.getName());
+		Uri u = Uri.parse(geo);
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+	    intent.setData(u);
+	    if (intent.resolveActivity(getPackageManager()) != null) {
+	        startActivity(intent);
+	    }
 	}
 	
 	public class SpeechInitListener implements TextToSpeech.OnInitListener {
