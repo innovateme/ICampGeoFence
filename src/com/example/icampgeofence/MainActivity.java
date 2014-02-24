@@ -76,7 +76,10 @@ public class MainActivity extends Activity {
                 if (selected.isTriggered()) {
                     selected.setTriggered(false);
                     fenceListAdapter.notifyDataSetChanged();
-                    alarmPlayer.stop();
+
+                    if (alarmPlayer.isPlaying()) {
+                        alarmPlayer.pause();
+                    }
                 }
                 else {
                 	showFenceOnMap(selected);
@@ -88,8 +91,9 @@ public class MainActivity extends Activity {
 		
 		movementMgr = new MovementMgr(this);
 
-		alarmPlayer = MediaPlayer.create(this, R.raw.alarm);
+		alarmPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
 		alarmPlayer.setLooping(true);
+		alarmPlayer.setVolume(1.0f, 1.0f);
 
 		tts = new TextToSpeech(this, new SpeechInitListener());
 
@@ -160,7 +164,9 @@ public class MainActivity extends Activity {
 									Integer.toString(transitionType));
 				}
 
-				alarmPlayer.start();
+				if (!alarmPlayer.isPlaying()) {
+					alarmPlayer.start();
+				}
 		   }
 		}
 	}
