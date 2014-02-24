@@ -1,9 +1,16 @@
 package com.example.icampgeofence;
 
+import java.util.List;
+
 import android.app.Activity;
+import android.content.Context;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,12 +20,55 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 
-public class AddFenceActivity extends Activity {
+public class AddFenceActivity extends Activity implements LocationListener {
 
     private LocationMgr locationMgr = null;
+    protected LocationManager lm;
+    String provider;
+    
+    @Override
+    public void onLocationChanged(Location loc) {
+	    EditText newLat = (EditText) findViewById(R.id.new_lat);		    
+	    EditText newLong = (EditText) findViewById(R.id.new_long);
+	    newLat.setText("");
+	    newLong.setText("");
+    	
+        Toast.makeText(
+                getBaseContext(),
+                "Location changed: Lat: " + loc.getLatitude() + " Lng: "
+                    + loc.getLongitude(), Toast.LENGTH_SHORT).show();
+        Log.d("ADD_FENCE_ACTIVITY", "Location changed: Lat: " + loc.getLatitude() + " Lng: "
+                + loc.getLongitude());
+        
+	    newLat.setText(String.valueOf(loc.getLatitude()));
+	    newLong.setText(String.valueOf(loc.getLongitude()));
+        
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+    	Log.d("ADD_FENCE_ACTIVITY", "onProviderDisabled");
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+    	Log.d("ADD_FENCE_ACTIVITY", "onProviderEnabled");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+    	Log.d("ADD_FENCE_ACTIVITY", "onStatusChanged");
+    }
+    
 
 	public void useCurrentLocation(View view) {
-	    Location currentLoc = locationMgr.getClient().getLastLocation();
+        // getting GPS status
+        boolean isGPSEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		Location currentLoc = lm.getLastKnownLocation(provider);
+    	Log.d("ADD_FENCE_ACTIVITY", "Provider:" + provider);
+    	Log.d("ADD_FENCE_ACTIVITY", "Location:" + currentLoc);
+		
+//		Location currentLoc = locationMgr.getClient().getLastLocation();
 	    
 	    if (currentLoc != null) {
 		    EditText newLat = (EditText) findViewById(R.id.new_lat);
@@ -27,8 +77,13 @@ public class AddFenceActivity extends Activity {
 		    EditText newLong = (EditText) findViewById(R.id.new_long);
 		    newLong.setText(String.valueOf(currentLoc.getLongitude()));
 	    }
-	    else {
+	    else if (isGPSEnabled) {
 	        Toast.makeText(this, "Current location not available",
+	                Toast.LENGTH_SHORT).show();
+	        return;
+	    }
+	    else {
+	        Toast.makeText(this, "GPS not enabled",
 	                Toast.LENGTH_SHORT).show();
 	        return;
 	    }
@@ -90,7 +145,27 @@ public class AddFenceActivity extends Activity {
          * handle callbacks.
          */
 		locationMgr = new LocationMgr(this);
+		
+	    lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+	    Criteria criteria = new Criteria();
+	    provider = lm.getBestProvider(criteria, false);
 	}
+
+    /* Request updates at startup */
+    @Override
+    protected void onResume() {
+      super.onResume();
+      lm.requestLocationUpdates(provider, 400, 1, this);
+      Log.d("ADD_FENCE_ACTIVITY", "Updates started:" + provider);
+    }
+
+    /* Remove the locationlistener updates when Activity is paused */
+    @Override
+    protected void onPause() {
+      super.onPause();
+      lm.removeUpdates(this);
+      Log.d("ADD_FENCE_ACTIVITY", "Updates stopped");
+    }
 
     /*
      * Called when the Activity becomes visible.
