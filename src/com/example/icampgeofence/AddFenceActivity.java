@@ -54,7 +54,11 @@ public class AddFenceActivity extends Activity {
         else if (newFenceType.equalsIgnoreCase("Enter")){
             selectedFenceType = Geofence.GEOFENCE_TRANSITION_ENTER;
         }
-        else {
+        else if (newFenceType.equalsIgnoreCase("Enter or Exit")){
+        	selectedFenceType = (Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT);
+        }
+        else
+        {
             selectedFenceType = Geofence.GEOFENCE_TRANSITION_DWELL;
         }
         		

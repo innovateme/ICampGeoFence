@@ -45,6 +45,9 @@ public class FenceListAdapter extends ArrayAdapter<Fence> {
 		if (f.getTransition() == Geofence.GEOFENCE_TRANSITION_DWELL) {
 			triggerFmt = "Dwell within %,.0f meters of %.4f, %.4f";
 		}
+		if (f.getTransition() == (Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)) {
+			triggerFmt = "Enter or Exit within %,.0f meters of %.4f, %.4f";
+		}
 		String trigger = String.format(triggerFmt, f.getRadius(), f.getLat(), f.getLon());
 
 		TextView triggerView = (TextView) rowView.findViewById(R.id.fence_list_item_trigger);
