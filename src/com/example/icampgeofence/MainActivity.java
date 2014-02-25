@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,9 +30,13 @@ import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
+import com.google.android.gms.location.LocationClient.OnRemoveGeofencesResultListener;
 
 public class MainActivity extends Activity {
 
+	public static final String TAG = "ICAMP_GEOFENCE";
+	
     private LocationMgr locationMgr = null;
     private FenceMgr fenceMgr;
     private ArrayAdapter<Fence> fenceListAdapter;
@@ -114,7 +119,7 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 	    intent.setData(u);
 	    if (intent.resolveActivity(getPackageManager()) != null) {
-	        startActivity(intent);
+	    	startActivity(intent);
 	    }
 	}
 	
@@ -302,8 +307,59 @@ public class MainActivity extends Activity {
 	    	Intent intent = new Intent(this, AboutActivity.class);
 	    	startActivity(intent);
 			return true;
+		case R.id.delete_all_fences:
+			if (!fenceMgr.getFences().isEmpty()) {
+				locationMgr.removeAllGeofences(new OnRemoveGeofencesResultListener() {
+	
+					@Override
+					public void onRemoveGeofencesByRequestIdsResult(int statusCode, String[] geofenceRequestIds) {
+						fenceListAdapter.notifyDataSetChanged();
+					}
+	
+					@Override
+					public void onRemoveGeofencesByPendingIntentResult(int arg0, PendingIntent arg1) {
+						// TODO Auto-generated method stub
+					}
+				});
+			}
+			return true;
+		case R.id.load_default_fences:
+			if (!fenceMgr.getFences().isEmpty()) {
+				locationMgr.removeAllGeofences(new OnRemoveGeofencesResultListener() {
+	
+					@Override
+					public void onRemoveGeofencesByRequestIdsResult(int statusCode, String[] geofenceRequestIds) {
+						fenceListAdapter.notifyDataSetChanged();
+						List<Fence> defaultFences = fenceMgr.readDefaultFences();
+						locationMgr.addGeofences(defaultFences, new OnAddGeofencesResultListener() {
+							
+							@Override
+							public void onAddGeofencesResult(int arg0, String[] arg1) {
+								fenceListAdapter.notifyDataSetChanged();
+							}
+						});
+					}
+	
+					@Override
+					public void onRemoveGeofencesByPendingIntentResult(int arg0, PendingIntent arg1) {
+						// TODO Auto-generated method stub
+					}
+				});
+			}
+			else {
+				List<Fence> defaultFences = fenceMgr.readDefaultFences();
+				locationMgr.addGeofences(defaultFences, new OnAddGeofencesResultListener() {
+					
+					@Override
+					public void onAddGeofencesResult(int arg0, String[] arg1) {
+						fenceListAdapter.notifyDataSetChanged();
+					}
+				});
+			}
+			return true;
 		case R.id.action_toggle_movemgr:
 			toggleMoveMgr();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

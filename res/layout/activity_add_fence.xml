@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+  
+  <GridLayout
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
+       android:layout_height="wrap_content"
        android:useDefaultMargins="true"
        android:alignmentMode="alignBounds"
        android:columnOrderPreserved="false"
@@ -19,7 +23,6 @@
 	        android:layout_gravity="right|center_vertical"
 		    style="@android:style/TextAppearance.DeviceDefault.Medium"
 	        android:text="@string/fenceName_prompt" />
-
 		
 	    <EditText android:id="@+id/fence_name"
 		    style="@android:style/TextAppearance.DeviceDefault.Medium"  
@@ -38,7 +41,19 @@
 	        android:entries="@array/GeoFenceType_array"
 	        android:prompt="@string/selectGeoFenceType" />
 	    	    
-		<TextView
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_column="0"
+            android:layout_gravity="right|center_vertical"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:text="@string/dwell_time_prompt" />
+        
+        <EditText android:id="@+id/dwell_time"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:text="@string/default_dwell"
+            android:inputType="number" />
+	    
+        <TextView
 		    android:layout_marginTop="10dp"
 		    android:layout_column="0"
 	        android:layout_gravity="right|center_vertical"
@@ -74,10 +89,16 @@
 	        android:text="@string/default_radius"
 	        android:inputType="number" />
 
-		<ImageButton
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_column="0"
+            android:layout_gravity="center"
+            android:text="@string/useCurrentLocation_label"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+        <ImageButton
 		    android:layout_column="1"
-		    android:layout_gravity="left|center_vertical"
-		    android:layout_row="6"
+		    android:layout_gravity="center|center_vertical"
 		    android:contentDescription="@string/current_loc_btn_desc"
 		    android:onClick="useCurrentLocation"
 		    android:src="@drawable/gps13" />
@@ -85,26 +106,19 @@
 		<ImageButton
 		    android:layout_column="2"
 		    android:layout_gravity="left|center_vertical"
-		    android:layout_row="6"
 		    android:contentDescription="@string/current_loc_btn_desc"
 		    android:onClick="useLmCurrentLocation"
 		    android:src="@drawable/gps13" />
 
-		<TextView
-		    android:id="@+id/textView1"
-		    android:layout_column="0"
-		    android:layout_gravity="center"
-		    android:layout_row="6"
-		    android:text="@string/useCurrentLocation_label"
-		    android:textAppearance="?android:attr/textAppearanceSmall" />
-		
 		<Button
 		    style="@android:style/TextAppearance.DeviceDefault.Small"
 		    android:layout_column="1"
 		    android:layout_gravity="top"
 		    android:layout_marginTop="40dp"
-		    android:layout_row="7"
+		    android:layout_row="8"
 		    android:onClick="addFence"
 		    android:text="@string/add_btn_label" />
 
-</GridLayout>
+  </GridLayout>
+
+</ScrollView>

@@ -6,6 +6,8 @@ import com.google.android.gms.location.Geofence;
  * Data model for a circular geofence.
  */
 public class Fence implements Comparable<Fence> {
+	public static final int DEFAULT_DWELL_TIME_SEC = 30;
+	
 	private final String id;
 	private final String name;
 	private final double lat;
@@ -14,15 +16,11 @@ public class Fence implements Comparable<Fence> {
 	private final long duration;
 	// TODO: automatic resetting?
 	private final int transition;
+	private final int dwellTime;
 	private transient boolean triggered = false;
 
 	/**
-	 * @param requestId The Geofence's request ID
-	 * @param latitude Latitude of the Geofence's center.
-	 * @param longitude Longitude of the Geofence's center.
-	 * @param radius Radius of the geofence circle.
-	 * @param duration Geofence expiration duration
-	 * @param transition Type of Geofence transition.
+	 * Creates a new Fence with default dwell time.
 	 */
 	public Fence(
 			String name,
@@ -32,6 +30,27 @@ public class Fence implements Comparable<Fence> {
 			long duration,
 			int transition) {
 
+		this(name, latitude, longitude, radius, duration, transition, DEFAULT_DWELL_TIME_SEC);
+	}
+
+	/**
+	 * @param requestId The Geofence's request ID
+	 * @param latitude Latitude of the Geofence's center.
+	 * @param longitude Longitude of the Geofence's center.
+	 * @param radius Radius of the geofence circle.
+	 * @param duration Geofence expiration duration
+	 * @param transition Type of Geofence transition.
+	 * @param dwell time in seconds - used only for dwell type
+	 */
+	public Fence(
+			String name,
+			double latitude,
+			double longitude,
+			float radius,
+			long duration,
+			int transition,
+			int dwellTime) {
+
 		id = name.toLowerCase();
 		this.name = name; 
 		lat = latitude;
@@ -39,6 +58,7 @@ public class Fence implements Comparable<Fence> {
 		this.radius = radius;
 		this.duration = duration;
 		this.transition = transition;
+		this.dwellTime = dwellTime;
 	}
 
 	@Override
@@ -52,6 +72,10 @@ public class Fence implements Comparable<Fence> {
 
 	public int getTransition() {
 		return transition;
+	}
+
+	public int getDwellTime() {
+		return dwellTime;
 	}
 
 	public String getId() {
@@ -94,7 +118,7 @@ public class Fence implements Comparable<Fence> {
 		.setTransitionTypes(transition)
 		.setCircularRegion(lat, lon, radius)
 		.setExpirationDuration(duration)
-		.setLoiteringDelay(30000)
+		.setLoiteringDelay(dwellTime * 1000)
 		.setNotificationResponsiveness(5000)
 		.build();
 	}

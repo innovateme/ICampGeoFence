@@ -8,6 +8,12 @@
     
     <item android:id="@+id/item_about" android:title="@string/about_menu_label"></item>
 
+    <item android:id="@+id/delete_all_fences"
+        android:title="@string/delete_all_fences_label" />
+
+    <item android:id="@+id/load_default_fences"
+        android:title="@string/load_default_fences_label" />
+
     <item android:id="@+id/action_toggle_movemgr"
         android:checkable="true"
         android:title="@string/service_toggle_movemgr_label" />

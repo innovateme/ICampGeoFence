@@ -1,7 +1,5 @@
 package com.example.icampgeofence;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.location.Criteria;
@@ -14,6 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -113,11 +113,21 @@ public class AddFenceActivity extends Activity implements LocationListener {
 	    String newLat = ((EditText) findViewById(R.id.new_lat)).getText().toString();
 	    String newLong = ((EditText) findViewById(R.id.new_long)).getText().toString();
 	    String newRadius = ((EditText) findViewById(R.id.new_radius)).getText().toString();
+	    String newDwellTime = ((EditText) findViewById(R.id.dwell_time)).getText().toString();
 	    if (newFenceName.isEmpty() || newLat.isEmpty() || newLong.isEmpty() || newRadius.isEmpty()) {
 	        Toast.makeText(this, "Invalid geofence params", Toast.LENGTH_SHORT).show();
 	        return;
 	    }
-        
+
+	    Integer dwell = null;
+	    try {
+	    	dwell= Integer.valueOf(newDwellTime);
+	    }
+	    catch (NumberFormatException e) {
+	    	Log.e(MainActivity.TAG, "Bad dwell time format.");
+	    }
+
+
         int selectedFenceType;
         if (newFenceType.equalsIgnoreCase("Exit")) {
             selectedFenceType = Geofence.GEOFENCE_TRANSITION_EXIT;
@@ -139,7 +149,8 @@ public class AddFenceActivity extends Activity implements LocationListener {
 				Double.parseDouble(newLong),
 				Float.parseFloat(newRadius),
 				Geofence.NEVER_EXPIRE,
-				selectedFenceType);
+				selectedFenceType,
+				dwell);
 
 	    locationMgr.addGeofence(f);
 		NavUtils.navigateUpFromSameTask(this);
@@ -153,6 +164,25 @@ public class AddFenceActivity extends Activity implements LocationListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_fence);
+
+		final EditText dwellField = (EditText) findViewById(R.id.dwell_time);
+		Spinner s = (Spinner) findViewById(R.id.fence_type);
+		s.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+		    @Override
+		    public void onItemSelected(AdapterView<?> spinner, View view, int position, long arg3)
+		    {
+		         String fenceType = spinner.getItemAtPosition(position).toString();
+		         dwellField.setEnabled(fenceType.equalsIgnoreCase("Dwell"));
+		    }
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				dwellField.setEnabled(false);
+			}
+			
+		});
+		
 		// Show the Up button in the action bar.
 		setupActionBar();
 		

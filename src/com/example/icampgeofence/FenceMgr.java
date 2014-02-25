@@ -1,8 +1,9 @@
 package com.example.icampgeofence;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -17,7 +18,8 @@ import com.google.gson.reflect.TypeToken;
  * Manages a list of {@link Fence}s.
  */
 public class FenceMgr {
-	private static final String JSON_FILE_NAME = "fences.json";
+	private static final String FENCES_FILE_NAME = "fences.json";
+	private static final String DEFAULT_FENCES_FILE_NAME = "default_fences.json";
 
 	private static FenceMgr instance;
 
@@ -36,7 +38,7 @@ public class FenceMgr {
 
 	public FenceMgr(Context ctx) {
 		appContext = ctx;
-		readFences();
+		add(readDefaultFences());
 	}
 
 	public void add(Fence fence) {
@@ -47,8 +49,18 @@ public class FenceMgr {
 
 		// sync json
 		writeFences();
+	}
 
-		// TODO: call google create API
+	public void add(List<Fence> fenceList) {
+		for (Fence f : fenceList) {
+			if (!fences.contains(f)) {
+				// add to list
+				fences.add(f);
+			}
+		}
+
+		// sync json
+		writeFences();
 	}
 
 	public void delete(Fence fence) {
@@ -57,27 +69,38 @@ public class FenceMgr {
 
 		// sync json
 		writeFences();
-
-		// TODO: call google destroy API
 	}
 	
+	public void delete(List<Fence> fenceList) {
+		fences.removeAll(fenceList);
+
+		// sync json
+		writeFences();
+	}
+
 	public void deleteAll() {
 		fences.clear();
 		writeFences();
 	}
 
-	public void readFences() {
-		fences.clear();
+	public List<Fence> readDefaultFences() {
+		return readFencesFromStream(appContext.getResources().openRawResource(R.raw.default_fences));
+	}
+	
+	public List<Fence> readFences(String fileName) throws FileNotFoundException {
+		return readFencesFromStream(appContext.openFileInput(fileName));
+	}
+
+	public List<Fence> readFencesFromStream(InputStream is) {
+		List<Fence> fenceList = null;
 
 		BufferedReader br = null; 
 		try {
-			FileInputStream is = appContext.openFileInput(JSON_FILE_NAME);
 			InputStreamReader isr = new InputStreamReader(is);
 			br = new BufferedReader(isr);
 
 			Type type = new TypeToken<List<Fence>>(){}.getType();
-			List<Fence> fenceList = new Gson().fromJson(br, type);
-			fences.addAll(fenceList);
+			fenceList = new Gson().fromJson(br, type);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -85,11 +108,13 @@ public class FenceMgr {
 		finally {
 			try { br.close(); } catch (Exception e) { }
 		}
+		
+		return fenceList;
 	}
 
 	public void writeFences() {
 		try {
-			FileOutputStream os = appContext.openFileOutput(JSON_FILE_NAME, Context.MODE_PRIVATE);
+			FileOutputStream os = appContext.openFileOutput(FENCES_FILE_NAME, Context.MODE_PRIVATE);
 			os.write(new Gson().toJson(fences).getBytes());
 			os.close();
 		}

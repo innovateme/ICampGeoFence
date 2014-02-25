@@ -189,6 +189,81 @@ public class LocationMgr  implements
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
     
+    public void addGeofences(final List<Fence> fenceList, final OnAddGeofencesResultListener listener) {
+    	List<Geofence> gfList = new ArrayList<Geofence>();
+    	// create a Geofence from each Fence
+    	for (Fence f : fenceList) {
+    		gfList.add(f.asGeofence());
+    	}
+		// get pending intent for geofence transitions
+		geofenceRequestIntent = getTransitionPendingIntent();
+		// Send a request to add the current geofences
+        locationClient.addGeofences(gfList, geofenceRequestIntent, new OnAddGeofencesResultListener() {
+			
+			@Override
+			public void onAddGeofencesResult(int statusCode, String[] geofenceRequestIds) {
+				// if successful, persist the new Fence
+		        if (LocationStatusCodes.SUCCESS == statusCode) {
+		    		FenceMgr.getDefault().add(fenceList);
+		    		listener.onAddGeofencesResult(statusCode, geofenceRequestIds);
+		    		Toast.makeText(parentActivity, "Added " + fenceList.size() + " new geofences.", Toast.LENGTH_SHORT).show();
+		        }
+		        else {
+			        // If adding the geofences failed
+		            /*
+		             * Report errors here.
+		             * You can log the error using Log.e() or update
+		             * the UI.
+		             */
+		        }
+		        // Turn off the in progress flag
+		        inProgress = false;
+			}
+		});
+    }
+    
+    
+    public void removeAllGeofences(final OnRemoveGeofencesResultListener listener) {
+    	if (!FenceMgr.getDefault().getFences().isEmpty()) {
+    		removeGeofences(FenceMgr.getDefault().getFences(), listener);
+    	}
+    }
+
+    
+    public void removeGeofences(final List<Fence> fenceList, final OnRemoveGeofencesResultListener listener) {
+    	List<String> gfList = new ArrayList<String>();
+    	for (Fence f : fenceList) {
+    		gfList.add(f.getId());
+    	}
+        locationClient.removeGeofences(gfList, new OnRemoveGeofencesResultListener() {
+			
+			@Override
+			public void onRemoveGeofencesByRequestIdsResult(int statusCode, String[] geofenceRequestIds) {
+				// if successful, persist the change
+		        if (LocationStatusCodes.SUCCESS == statusCode) {
+		    		FenceMgr.getDefault().delete(fenceList);
+		    		listener.onRemoveGeofencesByRequestIdsResult(statusCode, geofenceRequestIds);
+		    		Toast.makeText(parentActivity, "Removed " + geofenceRequestIds.length + " geofences.", Toast.LENGTH_SHORT).show();
+		        }
+		        else {
+			        // If adding the geofences failed
+		            /*
+		             * Report errors here.
+		             * You can log the error using Log.e() or update
+		             * the UI.
+		             */
+		        }
+		        // Turn off the in progress flag
+		        inProgress = false;
+			}
+			
+			@Override
+			public void onRemoveGeofencesByPendingIntentResult(int arg0, PendingIntent arg1) {
+				// TODO Auto-generated method stub
+			}
+		});
+    }
+
     public void addGeofence(final Fence fence) {
 		// get pending intent for geofence transitions
 		geofenceRequestIntent = getTransitionPendingIntent();
@@ -216,9 +291,6 @@ public class LocationMgr  implements
 		        }
 		        // Turn off the in progress flag
 		        inProgress = false;
-		        
-		        // disconnect the client
-		        //locationClient.disconnect();
 			}
 		});
 	}
