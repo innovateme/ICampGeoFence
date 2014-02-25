@@ -28,10 +28,10 @@ public class AddFenceActivity extends Activity implements LocationListener {
     
     @Override
     public void onLocationChanged(Location loc) {
-	    EditText newLat = (EditText) findViewById(R.id.new_lat);		    
-	    EditText newLong = (EditText) findViewById(R.id.new_long);
-	    newLat.setText("");
-	    newLong.setText("");
+//	    EditText newLat = (EditText) findViewById(R.id.new_lat);		    
+//	    EditText newLong = (EditText) findViewById(R.id.new_long);
+//	    newLat.setText("");
+//	    newLong.setText("");
     	
         Toast.makeText(
                 getBaseContext(),
@@ -40,8 +40,8 @@ public class AddFenceActivity extends Activity implements LocationListener {
         Log.d("ADD_FENCE_ACTIVITY", "Location changed: Lat: " + loc.getLatitude() + " Lng: "
                 + loc.getLongitude());
         
-	    newLat.setText(String.valueOf(loc.getLatitude()));
-	    newLong.setText(String.valueOf(loc.getLongitude()));
+//	    newLat.setText(String.valueOf(loc.getLatitude()));
+//	    newLong.setText(String.valueOf(loc.getLongitude()));
         
     }
 
@@ -63,13 +63,29 @@ public class AddFenceActivity extends Activity implements LocationListener {
 
 	public void useCurrentLocation(View view) {
         // getting GPS status
+		Location currentLoc = locationMgr.getClient().getLastLocation();
+    	Log.d("ADD_FENCE_ACTIVITY", "Location:" + currentLoc);
+	    
+	    if (currentLoc != null) {
+		    EditText newLat = (EditText) findViewById(R.id.new_lat);
+		    newLat.setText(String.valueOf(currentLoc.getLatitude()));
+		    
+		    EditText newLong = (EditText) findViewById(R.id.new_long);
+		    newLong.setText(String.valueOf(currentLoc.getLongitude()));
+	    }
+	    else {
+	        Toast.makeText(this, "Current location not available",
+	                Toast.LENGTH_SHORT).show();
+	        return;
+	    }
+	}
+
+	public void useLmCurrentLocation(View view) {
+        // getting GPS status
         boolean isGPSEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		Location currentLoc = lm.getLastKnownLocation(provider);
-    	Log.d("ADD_FENCE_ACTIVITY", "Provider:" + provider);
     	Log.d("ADD_FENCE_ACTIVITY", "Location:" + currentLoc);
 		
-//		Location currentLoc = locationMgr.getClient().getLastLocation();
-	    
 	    if (currentLoc != null) {
 		    EditText newLat = (EditText) findViewById(R.id.new_lat);
 		    newLat.setText(String.valueOf(currentLoc.getLatitude()));
@@ -155,6 +171,20 @@ public class AddFenceActivity extends Activity implements LocationListener {
     @Override
     protected void onResume() {
       super.onResume();
+      
+/*      LocationListener locationListener = new LocationListener() {
+    	    public void onLocationChanged(Location location) {
+    	      // Called when a new location is found by the network location provider.
+    	      makeUseOfNewLocation(location);
+    	    }
+
+    	    public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+    	    public void onProviderEnabled(String provider) {}
+
+    	    public void onProviderDisabled(String provider) {}
+    	  };
+*/     
       lm.requestLocationUpdates(provider, 400, 1, this);
       Log.d("ADD_FENCE_ACTIVITY", "Updates started:" + provider);
     }
