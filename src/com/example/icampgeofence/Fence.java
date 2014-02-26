@@ -119,7 +119,7 @@ public class Fence implements Comparable<Fence> {
 		.setCircularRegion(lat, lon, radius)
 		.setExpirationDuration(duration)
 		.setLoiteringDelay(dwellTime * 1000)
-		.setNotificationResponsiveness(5000)
+		.setNotificationResponsiveness(1000)
 		.build();
 	}
 
