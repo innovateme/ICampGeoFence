@@ -28,20 +28,12 @@ public class AddFenceActivity extends Activity implements LocationListener {
     
     @Override
     public void onLocationChanged(Location loc) {
-//	    EditText newLat = (EditText) findViewById(R.id.new_lat);		    
-//	    EditText newLong = (EditText) findViewById(R.id.new_long);
-//	    newLat.setText("");
-//	    newLong.setText("");
-    	
-        Toast.makeText(
-                getBaseContext(),
-                "Location changed: Lat: " + loc.getLatitude() + " Lng: "
-                    + loc.getLongitude(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(
+//                getBaseContext(),
+//                "Location changed: Lat: " + loc.getLatitude() + " Lng: "
+//                    + loc.getLongitude(), Toast.LENGTH_SHORT).show();
         Log.d("ADD_FENCE_ACTIVITY", "Location changed: Lat: " + loc.getLatitude() + " Lng: "
                 + loc.getLongitude());
-        
-//	    newLat.setText(String.valueOf(loc.getLatitude()));
-//	    newLong.setText(String.valueOf(loc.getLongitude()));
         
     }
 
