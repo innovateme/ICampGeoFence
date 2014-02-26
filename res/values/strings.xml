@@ -38,4 +38,5 @@
     <string name="load_default_fences_label">Load default geofences</string>
     <string name="dwell_time_prompt">Dwell Time (s):</string>
     <string name="default_dwell">30</string>
+    <string name="toggle_sounds_label">Audio Alerts</string>
 </resources>

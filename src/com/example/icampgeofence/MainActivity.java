@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,7 +44,8 @@ public class MainActivity extends Activity {
     
     private MovementMgr movementMgr = null;
     private MediaPlayer alarmPlayer;
-    private TextToSpeech tts = null;    
+    private TextToSpeech tts = null;
+    private boolean soundsEnabled = true;
 
     private BroadcastReceiver activityReceiver = new ActivityReciever();
     private BroadcastReceiver transReceiver = new FenceReciever();
@@ -96,6 +98,11 @@ public class MainActivity extends Activity {
 		
 		movementMgr = new MovementMgr(this);
 
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		if (savedInstanceState != null) {
+			soundsEnabled = savedInstanceState.getBoolean("soundsEnabled");
+		}
+		
 		alarmPlayer = MediaPlayer.create(MainActivity.this, R.raw.alarm);
 		alarmPlayer.setLooping(true);
 		alarmPlayer.setVolume(1.0f, 1.0f);
@@ -169,7 +176,7 @@ public class MainActivity extends Activity {
 									Integer.toString(transitionType));
 				}
 
-				if (!alarmPlayer.isPlaying()) {
+				if (!alarmPlayer.isPlaying() && soundsEnabled) {
 					alarmPlayer.start();
 				}
 		   }
@@ -200,7 +207,9 @@ public class MainActivity extends Activity {
 	            int activityType = mostProbableActivity.getType();
 	            
 	            ActivityType type = ActivityType.fromTypeId(mostProbableActivity.getType());
-	            tts.speak("Current activity type is " + type, TextToSpeech.QUEUE_ADD, null);
+	            if (soundsEnabled) {
+	            	tts.speak("Current activity type is " + type, TextToSpeech.QUEUE_ADD, null);
+	            }
 	        
 	        } else {
 				Log.d("MAIN_ACTIVITY", "Received broadcast intent!");
@@ -209,7 +218,25 @@ public class MainActivity extends Activity {
 	    }
 	}
 	
-    /*
+	
+	
+    @Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		soundsEnabled = savedInstanceState.getBoolean("soundsEnabled");
+		if (movementMgr.isUpdatesInProgress() != savedInstanceState.getBoolean("moveMgrUpdates")) {
+			toggleMoveMgr();
+    	}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("soundsEnabled", soundsEnabled);
+		outState.putBoolean("moveMgrUpdates", movementMgr.isUpdatesInProgress());
+	}
+
+	/*
      * Called when the Activity becomes visible.
      */
     @Override
@@ -265,9 +292,13 @@ public class MainActivity extends Activity {
     
     @Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_toggle_movemgr);
-    	if (item != null) {
-    		item.setChecked(movementMgr.isUpdatesInProgress());
+        MenuItem moveMgrItem = menu.findItem(R.id.action_toggle_movemgr);
+    	if (moveMgrItem != null) {
+    		moveMgrItem.setChecked(movementMgr.isUpdatesInProgress());
+    	}
+        MenuItem soundItem = menu.findItem(R.id.action_toggle_sounds);
+    	if (soundItem != null) {
+    		soundItem.setChecked(soundsEnabled);
     	}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -283,13 +314,22 @@ public class MainActivity extends Activity {
     }
     
 	public void toggleMoveMgr() {
-        tts.speak("Toggling activity updates", TextToSpeech.QUEUE_ADD, null);
+		if (soundsEnabled) {
+			tts.speak("Toggling activity updates", TextToSpeech.QUEUE_ADD, null);
+		}
 
 		if (movementMgr.isUpdatesInProgress()) {
 			movementMgr.stopUpdates();
 		}
 		else {
 			movementMgr.startUpdates();
+		}
+	}
+
+	public void toggleSounds() {
+		soundsEnabled = !soundsEnabled;
+		if (!soundsEnabled && alarmPlayer.isPlaying()) {
+			alarmPlayer.pause();
 		}
 	}
 
@@ -359,6 +399,9 @@ public class MainActivity extends Activity {
 			return true;
 		case R.id.action_toggle_movemgr:
 			toggleMoveMgr();
+			return true;
+		case R.id.action_toggle_sounds:
+			toggleSounds();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
