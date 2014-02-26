@@ -281,13 +281,17 @@ public class LocationMgr  implements
 		    		FenceMgr.getDefault().add(fence);
 		    		Toast.makeText(parentActivity, "Added new geofence named " + fence.getName(), Toast.LENGTH_SHORT).show();
 		        }
+		        else if (LocationStatusCodes.GEOFENCE_NOT_AVAILABLE == statusCode) {
+			        // If adding the geofences failed
+		        	Toast.makeText(parentActivity, "Error: Location Access turned off in Settings", Toast.LENGTH_SHORT).show();
+		        }
+		        else if (LocationStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES == statusCode) {
+			        // If adding the geofences failed
+		        	Toast.makeText(parentActivity, "Error: Geofence limit exceeded" + fence.getName() + ", Code:" + statusCode, Toast.LENGTH_SHORT).show();		        	
+		        }
 		        else {
 			        // If adding the geofences failed
-		            /*
-		             * Report errors here.
-		             * You can log the error using Log.e() or update
-		             * the UI.
-		             */
+		        	Toast.makeText(parentActivity, "Error: Geofence not added", Toast.LENGTH_SHORT).show();
 		        }
 		        // Turn off the in progress flag
 		        inProgress = false;
@@ -308,13 +312,13 @@ public class LocationMgr  implements
 		    		listener.onDeleteFence(fence.getId());
 		    		Toast.makeText(parentActivity, "Removed geofence named " + fence.getName(), Toast.LENGTH_SHORT).show();
 		        }
+		        else if (LocationStatusCodes.GEOFENCE_NOT_AVAILABLE == statusCode) {
+			        // If adding the geofences failed
+		        	Toast.makeText(parentActivity, "Error: Location Access turned off in Settings", Toast.LENGTH_SHORT).show();
+		        }
 		        else {
 			        // If adding the geofences failed
-		            /*
-		             * Report errors here.
-		             * You can log the error using Log.e() or update
-		             * the UI.
-		             */
+		        	Toast.makeText(parentActivity, "Error: Geofence not removed", Toast.LENGTH_SHORT).show();
 		        }
 		        // Turn off the in progress flag
 		        inProgress = false;
