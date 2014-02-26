@@ -38,7 +38,6 @@ public class FenceMgr {
 
 	public FenceMgr(Context ctx) {
 		appContext = ctx;
-		add(readDefaultFences());
 	}
 
 	public void add(Fence fence) {
